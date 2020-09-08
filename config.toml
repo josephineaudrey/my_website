@@ -105,7 +105,7 @@ disqusShortname = ""
 
     [[params.tiles.showcase]]
       title = "Masks"
-      subtitle = "Lorem Etiam Nullam"
+      subtitle = "THis is about masks"
       image = "pic03.jpg"
       url = "blogs/magna"
 
