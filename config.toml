@@ -1,5 +1,5 @@
 # Site settings
-baseURL = "http://example.org/" #https from netfliy and needs slash at end
+baseURL = "https://josephine-portfolio.netlify.app/" #https from netfliy and needs slash at end
 languageCode = "en-us"
 title = "Portfolio website of Josephine Haag"
 theme = "forty"
