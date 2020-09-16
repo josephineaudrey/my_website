@@ -14,7 +14,6 @@ output:
     toc: yes
 ---
 
-
 ```{r, setup, include = FALSE}
 knitr::opts_chunk$set(
   message = FALSE, 
@@ -29,6 +28,9 @@ knitr::opts_chunk$set(
   fig.height=6.75,
   fig.align = "center"
 )
+
+# blogdown::serve_site() 
+
 ```
 
 
@@ -68,6 +70,7 @@ skim(drinks)
 
 There are no missing values
 
+## Beer
 ```{r beer_plot}
 # filter for top 25 beer consuming countries
 top25_beer <- drinks %>% 
@@ -93,7 +96,7 @@ top25_beer_plotly
 
 ```
 
-
+## Wine
 ```{r wine_plot}
 # filter for top 25 wine consuming countries
 top25_wine <- drinks %>% 
@@ -120,6 +123,7 @@ top25_wine_plotly
 
 ```
 
+## Spirit
 ```{r spirit_plot}
 # filter for top 25 spirit consuming countries
 top25_spirit <- drinks %>% 
@@ -155,6 +159,8 @@ top25_beer_plot + top25_wine_plot + top25_spirit_plot +
 
 - In the wine consumption rankings, 9 of the top 10 are European countries. Most areas of Europe (especially the low latitudes) are very suitable for growing grapes due to sufficient sunlight and fertile soil. The typical ones are Southern France, Portugal, Andorra, Italy, and Greece. This may develop the people's habit of drinking wine. Compared to wine, the high beer consuming countries are mainly in higher latitudes (north of the Alps), since wheat is widely planted and is an important raw material for beer in these countries. In addition, the beer ranking includes the most continents among other liquors, which may implicate that beer is the most widely accepted and accessible alcohol in the world.
 - In the spirits consumption ranking, six of the top 25 are island countries in the Caribbean and the Pacific, and 11 of the top 25 are East European countries. This conforms to the origins of two very famous spirit types - rum and vodka.
+
+## Summary
 ```{r}
 
 library(choroplethr)

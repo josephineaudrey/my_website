@@ -13,7 +13,7 @@ output:
   pdf_document:
     toc: yes
 ---
-
+blogdown::serve_site() 
 ```{r, setup, include = FALSE}
 knitr::opts_chunk$set(
   message = FALSE, 
@@ -28,6 +28,8 @@ knitr::opts_chunk$set(
   fig.height=6.75,
   fig.align = "center"
 )
+# blogdown::serve_site() 
+
 ```
 
 ```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
