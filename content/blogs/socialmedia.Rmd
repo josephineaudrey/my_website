@@ -27,6 +27,8 @@ knitr::opts_chunk$set(
   fig.height=6.75,
   fig.align = "center"
 )
+library(ggthemr)
+ggthemr('dust')
 ```
 
 
@@ -45,7 +47,6 @@ library(infer)
 library(openintro)
 ```
 
-# General Social Survey (GSS)
 
 The [General Social Survey (GSS)](http://www.gss.norc.org/) gathers data on American society in order to monitor and explain trends in attitudes, behaviours, and attributes. Many trends have been tracked for decades, so one can see the evolution of attitudes, etc in American Society.
 
@@ -77,6 +78,7 @@ gss_prop <- gss_snap_insta %>%
   summarise(count = n()) %>% 
   mutate(prop = count/sum(count)) 
 gss_prop
+
 # percentile_ci
 snap_insta_formula_ci <- gss_snap_insta %>%
   group_by(sex) %>%
