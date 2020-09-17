@@ -30,8 +30,6 @@ knitr::opts_chunk$set(
   fig.align = "center"
 )
 
-# blogdown::serve_site() 
-
 ```
 
 
@@ -150,8 +148,7 @@ top25_spirit_plotly
 
 ```{r patchwork}
 # combine the three plots next to each other
-top25_beer_plot + top25_wine_plot + top25_spirit_plot + 
-  ?plot_layout
+top25_beer_plot + top25_wine_plot + top25_spirit_plot 
 ```
 
 
@@ -164,108 +161,108 @@ top25_beer_plot + top25_wine_plot + top25_spirit_plot +
 ## Summary
 ```{r}
 
-library(choroplethr)
-
-# filtering the year 2007 for population by country
-plotdata <- drinks %>%
-  rename(
-         value = pop) %>%
-  mutate(region = tolower(country)) 
-
-#creating a country-level choropleth map
-
-p<-country_choropleth(plotdata,aes(x=long, y=lat, size=pop, fill=country),
-                   num_colors=9) +
-  scale_fill_brewer(palette="YlOrRd") +
-  labs(title = "Population by country",
-       subtitle = "Gapminder 2007 data",
-       caption = "source: https://www.gapminder.org",
-       fill = "Population") +
-   theme_ipsum()
-
-# making the plot interactive 
-p <- ggplotly(p)
-p
-```
-
-
-```{r}
-# install.packages(c("cowplot", "googleway", "ggplot2", "ggrepel",
-# "ggspatial", "libwgeom", "sf", "rnaturalearth", "rnaturalearthdata")
-#
-# library("ggplot2")
-# theme_set(theme_bw())
-# library("sf")
-# library("rnaturalearth")
-# library("rnaturalearthdata")
-
-
-map.world <- map_data("world")
-
-# INSPECT
-as.factor(drinks$country) %>% levels()
-
-# RECODE NAMES
-# drinks$country <- recode(drinks$country
-#                                   ,'United States' = 'USA'
-#                                   ,'United Kingdom' = 'UK'
+# library(choroplethr)
+# 
+# # filtering the year 2007 for population by country
+# plotdata <- drinks %>%
+#   rename(
+#          value = pop) %>%
+#   mutate(region = tolower(country)) 
+# 
+# #creating a country-level choropleth map
+# 
+# p<-country_choropleth(plotdata,aes(x=long, y=lat, size=pop, fill=country),
+#                    num_colors=9) +
+#   scale_fill_brewer(palette="YlOrRd") +
+#   labs(title = "Population by country",
+#        subtitle = "Gapminder 2007 data",
+#        caption = "source: https://www.gapminder.org",
+#        fill = "Population") +
+#    theme_ipsum()
+# 
+# # making the plot interactive 
+# p <- ggplotly(p)
+# p
+# ```
+# 
+# 
+# ```{r}
+# # install.packages(c("cowplot", "googleway", "ggplot2", "ggrepel",
+# # "ggspatial", "libwgeom", "sf", "rnaturalearth", "rnaturalearthdata")
+# #
+# # library("ggplot2")
+# # theme_set(theme_bw())
+# # library("sf")
+# # library("rnaturalearth")
+# # library("rnaturalearthdata")
+# 
+# 
+# map.world <- map_data("world")
+# 
+# # INSPECT
+# as.factor(drinks$country) %>% levels()
+# 
+# # RECODE NAMES
+# # drinks$country <- recode(drinks$country
+# #                                   ,'United States' = 'USA'
+# #                                   ,'United Kingdom' = 'UK'
+# #         )
+# 
+# head(map.world)
+# 
+# # LEFT JOIN
+# map.world_joined <- left_join(map.world, top25_beer, by = c('region' = 'country'))
+# 
+# map.world_joined %>% 
+#   mutate(beer_yes = ifelse(
+#     beer_servings > 244, 
+#     "beer", 
+#     ""))
+# 
+# # df.top_beer <- data.frame(country = c(top25_beer$country),stringsAsFactors = F)
+# # glimpse(df.top_beer)
+# 
+# #--------
+# # GEOCODE
+# #--------
+# 
+# geocode.country_points <- geocode(df.top_beer$country)
+# 
+# df.top_beer <- cbind(df.top_beer,geocode.top_beer)
+# 
+# # INSPECT
+# print(df.top_beer)
+# 
+# 
+# ggplot() +
+#   geom_polygon(data = map.world_joined, aes(x = long, y = lat, group = group, fill = "beer_yes")) +
+#   geom_point(data = map.world_joined, aes(x = long, y = lat), color = "red") +
+#   scale_fill_manual(values = c("blue","white")) +
+#   labs(title = 'Countries with highest  alcohol consumption'
+#        ,subtitle = "find source") +
+#   theme(text = element_text(family = "Gill Sans", color = "#FFFFFF")
+#         ,panel.background = element_rect(fill = "#444444")
+#         ,plot.background = element_rect(fill = "#444444")
+#         ,panel.grid = element_blank()
+#         ,plot.title = element_text(size = 30)
+#         ,plot.subtitle = element_text(size = 10)
+#         ,axis.text = element_blank()
+#         ,axis.title = element_blank()
+#         ,axis.ticks = element_blank()
+#         ,legend.position = "none"
 #         )
-
-head(map.world)
-
-# LEFT JOIN
-map.world_joined <- left_join(map.world, top25_beer, by = c('region' = 'country'))
-
-map.world_joined %>% 
-  mutate(beer_yes = ifelse(
-    beer_servings > 244, 
-    "beer", 
-    ""))
-
-# df.top_beer <- data.frame(country = c(top25_beer$country),stringsAsFactors = F)
-# glimpse(df.top_beer)
-
-#--------
-# GEOCODE
-#--------
-
-geocode.country_points <- geocode(df.top_beer$country)
-
-df.top_beer <- cbind(df.top_beer,geocode.top_beer)
-
-# INSPECT
-print(df.top_beer)
-
-
-ggplot() +
-  geom_polygon(data = map.world_joined, aes(x = long, y = lat, group = group, fill = "beer_yes")) +
-  geom_point(data = map.world_joined, aes(x = long, y = lat), color = "red") +
-  scale_fill_manual(values = c("blue","white")) +
-  labs(title = 'Countries with highest  alcohol consumption'
-       ,subtitle = "find source") +
-  theme(text = element_text(family = "Gill Sans", color = "#FFFFFF")
-        ,panel.background = element_rect(fill = "#444444")
-        ,plot.background = element_rect(fill = "#444444")
-        ,panel.grid = element_blank()
-        ,plot.title = element_text(size = 30)
-        ,plot.subtitle = element_text(size = 10)
-        ,axis.text = element_blank()
-        ,axis.title = element_blank()
-        ,axis.ticks = element_blank()
-        ,legend.position = "none"
-        )
-
-
-
-# ggplot(data = drinks) +
-#     geom_sf()
-#
-# ggplot(data = world) +
-#     geom_sf(aes(fill = beer_servings)) +
-#     scale_fill_viridis_c(option = "plasma")
-#
-# mapped_data <- joinCountryData2Map(beer_servings, joinCode = "ISO3",
-#     nameJoinColumn = "country")
+# 
+# 
+# 
+# # ggplot(data = drinks) +
+# #     geom_sf()
+# #
+# # ggplot(data = world) +
+# #     geom_sf(aes(fill = beer_servings)) +
+# #     scale_fill_viridis_c(option = "plasma")
+# #
+# # mapped_data <- joinCountryData2Map(beer_servings, joinCode = "ISO3",
+# #     nameJoinColumn = "country")
 ```
 
 

@@ -100,13 +100,13 @@ disqusShortname = ""
     [[params.tiles.showcase]]
       title = "Cheers around the world"
       subtitle = "Which countries are the heaviest drinkers?"
-      image = "pic07.jpg"
+      image = "alcohol.jpg"
       url = "blogs/alcohol"
 
     [[params.tiles.showcase]]
       title = "Your people matter"
       subtitle = "How happy are your employees really?"
-      image = "pic08.jpg"
+      image = "employees.jpg"
       url = "blogs/employees"
 
     [[params.tiles.showcase]]
@@ -124,7 +124,7 @@ disqusShortname = ""
     [[params.tiles.showcase]]
       title = "Social Media"
       subtitle = "FWho uses social media these days?"
-      image = "pic06.jpg"
+      image = "socialmedia.jpg"
       url = "blogs/socialmedia"
     # You can make more showcases by copy and pasting the code above
 
@@ -165,7 +165,7 @@ disqusShortname = ""
     # - send a dummy email yourself to confirm your account
     # - click the confirm link in the email from www.formspree.io
     # - you're done. Happy mailing!
-    # formEmail = "example@domain.com"
+    formEmail = "josephine.haag@gmail.com"
 
     # Contact Section
     # You can add multiple emails, phone numbers, or addresses
