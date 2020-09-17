@@ -7,14 +7,15 @@ output:
     code_folding: show
     highlight: default
     number_sections: yes
-    theme: flatly
+    theme: forty
     toc: yes
     toc_float: yes
   pdf_document:
     toc: yes
 ---
-blogdown::serve_site() 
+
 ```{r, setup, include = FALSE}
+blogdown::serve_site() 
 knitr::opts_chunk$set(
   message = FALSE, 
   warning = FALSE, 

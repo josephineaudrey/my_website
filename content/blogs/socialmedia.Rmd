@@ -7,32 +7,15 @@ output:
     code_folding: show
     highlight: default
     number_sections: yes
-    theme: flatly
+    theme: forty
     toc: yes
     toc_float: yes
   pdf_document:
     toc: yes
 ---
 # SOCIAL MEDIA
-```{r, setup, echo=FALSE}
-knitr::opts_chunk$set(
-  message = FALSE, 
-  warning = FALSE, 
-  tidy=FALSE,     # display code as typed
-  size="small")   # slightly smaller font for code
-options(digits = 3)
-# default figure size
-knitr::opts_chunk$set(
-  fig.width=6.75, 
-  fig.height=6.75,
-  fig.align = "center"
-)
-library(ggthemr)
-ggthemr('dust')
-```
 
-
-```{r load-libraries, echo=FALSE}
+```{r load-libraries, echo=FALSE, include=FALSE}
 library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
 library(mosaic)
 library(ggthemes)
@@ -47,10 +30,30 @@ library(infer)
 library(openintro)
 ```
 
+```{r, setup, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+library(ggthemr)
+ggthemr('dust')
+
+if (!requireNamespace("devtools", quietly = TRUE))
+  install.packages("devtools")
+
+devtools::install_github("calligross/ggthemeassist")
+```
+
 
 The [General Social Survey (GSS)](http://www.gss.norc.org/) gathers data on American society in order to monitor and explain trends in attitudes, behaviours, and attributes. Many trends have been tracked for decades, so one can see the evolution of attitudes, etc in American Society.
-
-
 
 ```{r, read_gss_data, cache=TRUE}
 gss <- read_csv(here::here("content", "blogs", "smallgss2016.csv"), 
@@ -160,10 +163,10 @@ twitter_formula_ci <- gss_twitter_prop %>%
 twitter_formula_ci
   
 # check if Confidence Intervals overlap
-histogram_t <- ggplot(twitter_formula_ci,  
+barchart_t <- ggplot(twitter_formula_ci,  
        aes(x = twitter,
            y = p_hat_t,
-           colour = twitter)) +
+           colour = "#1DA1F2")) +
    geom_errorbar(aes(ymin = lower_95_t,
                      ymax = upper_95_t),
                      width = 0.05,
@@ -172,14 +175,14 @@ histogram_t <- ggplot(twitter_formula_ci,
               size  = 4) +
    scale_y_continuous(limits=c(0,1)) +
    theme_bw() +
-   theme(axis.title   = element_text(face  = "bold")) +
+   theme(axis.title = element_text(face  = "bold")) +
    labs(x = "Twitter usage",
         y = "",
    title = "Twitter usage among people with a bachelor or graduate degree in 2016") +
    theme(legend.position = 'none') + 
    NULL
 
-histogram_t
+barchart_t
 ```
 
 

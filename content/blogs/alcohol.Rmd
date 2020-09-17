@@ -7,7 +7,7 @@ output:
     code_folding: show
     highlight: kate
     number_sections: yes
-    theme: lumen
+    theme: forty
     toc: yes
     toc_float: yes
   pdf_document:
@@ -15,6 +15,7 @@ output:
 ---
 
 ```{r, setup, include = FALSE}
+blogdown::serve_site() 
 knitr::opts_chunk$set(
   message = FALSE, 
   warning = FALSE, 
