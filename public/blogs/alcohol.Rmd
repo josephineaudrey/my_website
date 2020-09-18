@@ -54,6 +54,9 @@ ggthemr('dust')
 
 
 # Where Do People Drink The Most Beer, Wine And Spirits?
+
+While some people might argue that drinking alcohol can provide several health benefits, others believe that you should never drink at all. Regardless of this discussion, where do people drink the most alcohol? And how does this differ by alcohol type. The following visualizations provide answers on regional trends for alcohol preference:
+
 ```{r load_alcohol_data, include=FALSE}
 library(fivethirtyeight)
 data(drinks)
@@ -62,11 +65,35 @@ data(drinks)
 
 
 
-```{r glimpse_skim_data}
+```{r glimpse_skim_data, include=FALSE}
 skim(drinks)
 ```
+## Total Alcohol
 
-There are no missing values
+```{r alcohol_plot}
+# filter for top 25 alcohol consuming countries
+top25_alcohol <- drinks %>% 
+  top_n(25, total_litres_of_pure_alcohol)  # rank top 25 by alcohol servings
+
+top25_alcohol_plot <- top25_alcohol %>%
+  ggplot(aes(
+    x = total_litres_of_pure_alcohol,
+    y = reorder(country,total_litres_of_pure_alcohol),
+    text = paste0(country, ", ", total_litres_of_pure_alcohol, "litres") # order countries by beer servings
+  )) +
+  geom_col(stat = "identity", width = 0.8, fill = "#c6dbef") + # adapt bars and set a color to beer
+  labs(
+    x = "Litres of Alcohol", 
+    y = "", 
+    title = "Top 25 Alcohol Consuming Countries", subtitle = "Belarus, Lithuania, & Andorra", caption = "Source: World Health Organization (GISAH), 2010") + # add labels to axis and title
+  NULL
+
+# convert into interactive graph
+top25_alcohol_plotly <- ggplotly(top25_alcohol_plot, tooltip = "text")
+
+top25_alcohol_plotly
+
+```
 
 ## Beer
 ```{r beer_plot}
@@ -86,8 +113,6 @@ top25_beer_plot <- top25_beer %>%
     y = "", 
     title = "Top 25 Beer Consuming Countries", subtitle = "Namibia, Czech Republic, & Gabon drink most beer", caption = "Source: World Health Organization (GISAH), 2010") + # add labels to axis and title
   NULL
-
-top25_beer_plot
 
 # convert into interactive graph
 top25_beer_plotly <- ggplotly(top25_beer_plot, tooltip = "text")
@@ -116,12 +141,11 @@ top25_wine_plot <- top25_wine %>%
     title = "Top 25 Wine Consuming Countries", subtitle = "France, Portugal, and Andorra drink most wine", caption = "Source: World Health Organization (GISAH), 2010") + # add labels to axis and title
   NULL
 
-top25_wine_plot
 
 # convert into interactive graph
-# top25_wine_plotly <- ggplotly(top25_wine_plot, tooltip = "text")
-# 
-# top25_wine_plotly
+top25_wine_plotly <- ggplotly(top25_wine_plot, tooltip = "text")
+
+top25_wine_plotly
 
 ```
 
@@ -147,14 +171,9 @@ top25_spirit_plot <- top25_spirit %>%
 top25_spirit_plot
 
 # convert into interactive graph
-# top25_spirit_plotly <- ggplotly(top25_spirit_plot, tooltip = "text")
-# 
-# top25_spirit_plotly
-```
+top25_spirit_plotly <- ggplotly(top25_spirit_plot, tooltip = "text")
 
-```{r patchwork}
-# combine the three plots next to each other
-top25_beer_plot + top25_wine_plot + top25_spirit_plot 
+top25_spirit_plotly
 ```
 
 
@@ -165,15 +184,15 @@ top25_beer_plot + top25_wine_plot + top25_spirit_plot
 - In the spirits consumption ranking, six of the top 25 are island countries in the Caribbean and the Pacific, and 11 of the top 25 are East European countries. This conforms to the origins of two very famous spirit types - rum and vodka.
 
 ## Summary
-```{r}
+```{r, include=FALSE}
 
 # library(choroplethr)
-# 
-# # filtering the year 2007 for population by country
+
+# filtering the year 2007 for population by country
 # plotdata <- drinks %>%
 #   rename(
 #          value = pop) %>%
-#   mutate(region = tolower(country)) 
+#   mutate(region = tolower(country))
 # 
 # #creating a country-level choropleth map
 # 

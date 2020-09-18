@@ -17,17 +17,8 @@
       <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>/blogs/alcohol/</guid>
-      <description>Where Do People Drink The Most Beer, Wine And Spirits? skim(drinks)  (#tab:glimpse_skim_data)Data summary  Name drinks  Number of rows 193  Number of columns 5  _______________________   Column type frequency:   character 1  numeric 4  ________________________   Group variables None    Variable type: character
-  skim_variable n_missing complete_rate min max empty n_unique whitespace    country 0 1 3 28 0 193 0    Variable type: numeric</description>
-    </item>
-    
-    <item>
-      <title>Alcohol consumption</title>
-      <link>/blogs/alcohol.knit/</link>
-      <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/blogs/alcohol.knit/</guid>
-      <description></description>
+      <description>Where Do People Drink The Most Beer, Wine And Spirits? While some people might argue that drinking alcohol can provide several health benefits, others believe that you should never drink at all. Regardless of this discussion, where do people drink the most alcohol? And how does this differ by alcohol type. The following visualizations provide answers on regional trends for alcohol preference:
+Total Alcohol # filter for top 25 alcohol consuming countries top25_alcohol &amp;lt;- drinks %&amp;gt;% top_n(25, total_litres_of_pure_alcohol) # rank top 25 by alcohol servings top25_alcohol_plot &amp;lt;- top25_alcohol %&amp;gt;% ggplot(aes( x = total_litres_of_pure_alcohol, y = reorder(country,total_litres_of_pure_alcohol), text = paste0(country, &amp;quot;, &amp;quot;, total_litres_of_pure_alcohol, &amp;quot;litres&amp;quot;) # order countries by beer servings )) + geom_col(stat = &amp;quot;identity&amp;quot;, width = 0.</description>
     </item>
     
     <item>
