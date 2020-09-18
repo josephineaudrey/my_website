@@ -7,7 +7,7 @@ output:
     code_folding: show
     highlight: default
     number_sections: yes
-    theme: forty
+    theme: flatly
     toc: yes
     toc_float: yes
   pdf_document:
@@ -54,11 +54,10 @@ You are asked to carry out the analysis. The objective is to find out whether th
 ```{r load_omega_data, include=FALSE}
 omega <- read_csv(here::here("content", "blogs", "omega.csv"))
 glimpse(omega) # examine the data frame
-# blogdown::serve_site() 
 
 ```
 
-## Relationship Salary - Gender ?
+## What is the relationship between salary and gender?
 
 ```{r, confint_single_valiables}
 # Summary Statistics of salary by gender
@@ -115,7 +114,7 @@ favstats (experience ~ gender, data=omega)
 
 Based on this evidence, can you conclude that there is a significant difference between the experience of the male and female executives? Perform similar analyses as in the previous section. Does your conclusion validate or endanger your conclusion about the difference in male and female salaries?  
 
-```{r, hypothesis_testing}
+```{r, hypothesis_testing executives}
 # hypothesis testing using t.test() 
 t.test(experience ~ gender, data = omega)
 # hypothesis testing using infer package
@@ -168,7 +167,7 @@ Salary and experience do have strong correlation and the correlation is higher w
 
 You can also run a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money. You should tun your hypothesis testing using `t.test()` and with the simulation method from the `infer` package.
 
-```{r, hypothesis_testing}
+```{r, hypothesis_testing simulation}
 # hypothesis testing using t.test() 
 
 
@@ -184,7 +183,7 @@ You can also run a hypothesis testing, assuming as a null hypothesis that the me
 
 At the board meeting, someone raised the issue that there was indeed a substantial difference between male and female salaries, but that this was attributable to other reasons such as differences in experience. A questionnaire send out to the 50 executives in the sample reveals that the average experience of the men is approximately 21 years, whereas the women only have about 7 years experience on average (see table below).
 
-```{r, experience_stats}
+```{r, experience_stats gender}
 # Summary Statistics of salary by gender
 favstats (experience ~ gender, data=omega)
 
@@ -201,7 +200,7 @@ Someone at the meeting argues that clearly, a more thorough analysis of the rela
 Analyse the relationship between salary and experience. Draw a scatterplot to visually inspect the data
 
 
-```{r, salary_exp_scatter}
+```{r, salary_exp_scatterplot}
 
 
 ```
@@ -210,7 +209,7 @@ Analyse the relationship between salary and experience. Draw a scatterplot to vi
 ## Check correlations between the data
 You can use `GGally:ggpairs()` to create a scatterplot and correlation matrix. Essentially, we change the order our variables will appear in and have the dependent variable (Y), salary, as last in our list. We then pipe the dataframe to `ggpairs()` with `aes` arguments to colour by `gender` and make ths plots somewhat transparent (`alpha  = 0.3`).
 
-```{r, ggpairs}
+```{r, ggpairs plot}
 omega %>% 
   select(gender, experience, salary) %>% #order variables they will appear in ggpairs()
   ggpairs(aes(colour=gender, alpha = 0.3))+

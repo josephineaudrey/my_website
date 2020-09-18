@@ -19,7 +19,7 @@ disqusShortname = ""
   # CSS class.
 
   # Provide your metadata here.
-  name = "Josephine Haag"
+  name = "Josephine A. Haag"
   description = "This is my individual portfolio"
 
   # Link custom assets relative to /static
@@ -38,7 +38,7 @@ disqusShortname = ""
   # Navigation Section
   [params.navigation]
     title = "Josephine's Portfolio"
-    subtitle = "this is what I do"
+    subtitle = "This is what I do"
     menu = "Menu"
     # Optional logo as brand stored in img/
     # logo = "logo.png"
@@ -82,7 +82,7 @@ disqusShortname = ""
     # To change the background image on the homepage banner, replace 'banner.jpg' in
     # the 'static/img' folder.
     title = "Hi, this is Josephine"
-    subtitle = "These are my projects"
+    subtitle = "These are some of my projects"
     buttonText = "Show me more"
 
 
@@ -92,7 +92,7 @@ disqusShortname = ""
     # Display your showcases here.
     
     [[params.tiles.showcase]]
-      title = "Pay"
+      title = "Gender pay gap"
       subtitle = "Is pay discrimination real?"
       image = "pic01.jpg"
       url = "blogs/omega"
@@ -122,8 +122,8 @@ disqusShortname = ""
       url = "blogs/ipsum"
 
     [[params.tiles.showcase]]
-      title = "Social Media"
-      subtitle = "FWho uses social media these days?"
+      title = "The social media trap"
+      subtitle = "Who uses social media these days?"
       image = "socialmedia.jpg"
       url = "blogs/socialmedia"
     # You can make more showcases by copy and pasting the code above
@@ -137,11 +137,11 @@ disqusShortname = ""
 
   # Section Type Two
   [params.two]
-    enable = true
-    title = "Data Analysis"
-    subtitle = """I like to explore and analyze interesting data sets in R."""
-    buttonText = "Get Started"
-    url = "blogs"
+   # enable = true
+   # title = "Data Analysis"
+   # subtitle = """I like to explore and analyze interesting data sets in R."""
+   # buttonText = "Get Started"
+   # url = "blogs"
 
 
   # Contact section

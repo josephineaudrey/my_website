@@ -6,19 +6,59 @@
     <description>Recent content on Portfolio website of Josephine Haag</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 07 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 18 Sep 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Mark Acceptance</title>
-      <link>/blogs/blog5/</link>
-      <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
+      <title>Alcohol consumption</title>
+      <link>/blogs/alcohol/</link>
+      <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>/blogs/blog5/</guid>
-      <description>NYT mask use Github source for data https://github.com/nytimes/covid-19-data/tree/master/mask-use
- Getting the data # Source for data url &amp;lt;- &amp;quot;https://github.com/nytimes/covid-19-data/raw/master/mask-use/mask-use-by-county.csv&amp;quot; #nyt_mask_survey &amp;lt;- read_csv(here::here(&amp;quot;data&amp;quot;, &amp;quot;nyt_mask_survey.csv&amp;quot;)) nyt_mask_survey &amp;lt;- read_csv(url) nyt_mask_survey &amp;lt;- nyt_mask_survey %&amp;gt;% clean_names() %&amp;gt;% mutate( mostly_yes= frequently+always, mostly_no = never+rarely, delta = mostly_yes-mostly_no ) glimpse(nyt_mask_survey) ## Rows: 3,142 ## Columns: 9 ## $ countyfp &amp;lt;chr&amp;gt; &amp;quot;01001&amp;quot;, &amp;quot;01003&amp;quot;, &amp;quot;01005&amp;quot;, &amp;quot;01007&amp;quot;, &amp;quot;01009&amp;quot;, &amp;quot;01011&amp;quot;, &amp;quot;010… ## $ never &amp;lt;dbl&amp;gt; 0.053, 0.083, 0.067, 0.020, 0.053, 0.</description>
+      <guid>/blogs/alcohol/</guid>
+      <description>Where Do People Drink The Most Beer, Wine And Spirits? skim(drinks)  (#tab:glimpse_skim_data)Data summary  Name drinks  Number of rows 193  Number of columns 5  _______________________   Column type frequency:   character 1  numeric 4  ________________________   Group variables None    Variable type: character
+  skim_variable n_missing complete_rate min max empty n_unique whitespace    country 0 1 3 28 0 193 0    Variable type: numeric</description>
+    </item>
+    
+    <item>
+      <title>Alcohol consumption</title>
+      <link>/blogs/alcohol.knit/</link>
+      <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blogs/alcohol.knit/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Employee Data</title>
+      <link>/blogs/employees/</link>
+      <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blogs/employees/</guid>
+      <description>IBM HR Analytics During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers for it.
+Employee Retention How often do people leave the company (attrition)
+attrition_rate &amp;lt;- filter(hr_cleaned %&amp;gt;% group_by(attrition) %&amp;gt;% summarise(n = count(attrition)) %&amp;gt;% mutate(attrition_rate = (n*100)/sum(n)), attrition == &amp;quot;Yes&amp;quot;) #added column for the attrition rate % attrition_rate ## # A tibble: 1 x 3 ## attrition n attrition_rate ## &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; ## 1 Yes 237 16.</description>
+    </item>
+    
+    <item>
+      <title>Pay discriminaton</title>
+      <link>/blogs/omega/</link>
+      <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blogs/omega/</guid>
+      <description>Omega Group - Pay Discrimination At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women.</description>
+    </item>
+    
+    <item>
+      <title>Social Media</title>
+      <link>/blogs/socialmedia/</link>
+      <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blogs/socialmedia/</guid>
+      <description>SOCIAL MEDIA The General Social Survey (GSS) gathers data on American society in order to monitor and explain trends in attitudes, behaviours, and attributes. Many trends have been tracked for decades, so one can see the evolution of attitudes, etc in American Society.
+Instagram and Snapchat, by sex Can we estimate the population proportion of Snapchat or Instagram users in 2016?
+gss_snap_insta &amp;lt;- gss %&amp;gt;% # create the new variable for snap_insta mutate(snap_insta = case_when( snapchat == &amp;quot;Yes&amp;quot; | instagrm == &amp;quot;Yes&amp;quot; ~ &amp;quot;Yes&amp;quot;, snapchat == &amp;quot;No&amp;quot; &amp;amp; instagrm == &amp;quot;No&amp;quot; ~ &amp;quot;No&amp;quot;, TRUE ~ NA_character_)) # calculate the proportion gss_prop &amp;lt;- gss_snap_insta %&amp;gt;% filter(!</description>
     </item>
     
     <item>
@@ -66,6 +106,17 @@
       <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
 You can embed an R code chunk like this:
 summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/blogs/cv/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/blogs/cv/</guid>
+      <description>datadrivencv  The goal of datadrivencv is to ease the burden of maintaining a CV by separating the content from the output by treating entries as data.
+Installation The development version from GitHub with:
+# install.packages(&amp;quot;devtools&amp;quot;) devtools::install_github(&amp;quot;nstrayer/datadrivencv&amp;quot;)   Motivation Updating a CV is not fun Anytime I would go to add something to my CV I ended up wanting to change the format a tiny bit. This usually meant the entire word document completely falling apart and needing to have each entry copied and pasted into a new version.</description>
     </item>
     
   </channel>

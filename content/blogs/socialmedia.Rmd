@@ -7,7 +7,7 @@ output:
     code_folding: show
     highlight: default
     number_sections: yes
-    theme: forty
+    theme: flatly
     toc: yes
     toc_float: yes
   pdf_document:
@@ -55,7 +55,7 @@ devtools::install_github("calligross/ggthemeassist")
 
 The [General Social Survey (GSS)](http://www.gss.norc.org/) gathers data on American society in order to monitor and explain trends in attitudes, behaviours, and attributes. Many trends have been tracked for decades, so one can see the evolution of attitudes, etc in American Society.
 
-```{r, read_gss_data, cache=TRUE}
+```{r, read_gss_data, cache=TRUE, include=FALSE}
 gss <- read_csv(here::here("content", "blogs", "smallgss2016.csv"), 
                 na = c("", "Don't know",
                        "No answer", "Not applicable"))

@@ -50,7 +50,7 @@ library(ggplot2)
 
 # IBM HR Analytics
 
-During my internship at an HR Tech start-up I learned a lot about employee retention and employee satisfaction.
+During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers for it. 
 
 ```{r loading_HR_dataset, include=FALSE}
 hr_dataset <- read_csv( "datasets_1067_1925_WA_Fn-UseC_-HR-Employee-Attrition.csv")
@@ -58,7 +58,7 @@ glimpse(hr_dataset)
 
 ```
 
-```{r cleaning_HR_dataset}
+```{r cleaning_HR_dataset, include=FALSE}
 # clean data set
 hr_cleaned <- hr_dataset %>% 
   clean_names() %>% 
