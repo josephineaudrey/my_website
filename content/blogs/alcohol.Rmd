@@ -88,6 +88,8 @@ top25_beer_plot <- top25_beer %>%
     title = "Top 25 Beer Consuming Countries", subtitle = "Namibia, Czech Republic, & Gabon drink most beer", caption = "Source: World Health Organization (GISAH), 2010") + # add labels to axis and title
   NULL
 
+top25_beer_plot
+
 # convert into interactive graph
 top25_beer_plotly <- ggplotly(top25_beer_plot, tooltip = "text")
 
@@ -115,10 +117,12 @@ top25_wine_plot <- top25_wine %>%
     title = "Top 25 Wine Consuming Countries", subtitle = "France, Portugal, and Andorra drink most wine", caption = "Source: World Health Organization (GISAH), 2010") + # add labels to axis and title
   NULL
 
-# convert into interactive graph
-top25_wine_plotly <- ggplotly(top25_wine_plot, tooltip = "text")
+top25_wine_plot
 
-top25_wine_plotly
+# convert into interactive graph
+# top25_wine_plotly <- ggplotly(top25_wine_plot, tooltip = "text")
+# 
+# top25_wine_plotly
 
 ```
 
@@ -141,9 +145,12 @@ top25_spirit_plot <- top25_spirit %>%
     title = "Top 25 Spirit Consuming Countries", subtitle = "Granada, Belarus, and Russia drink most spirit", caption = "Source: World Health Organization (GISAH), 2010") + # add labels to axis and title
   NULL
 
-top25_spirit_plotly <- ggplotly(top25_spirit_plot, tooltip = "text")
+top25_spirit_plot
 
-top25_spirit_plotly
+# convert into interactive graph
+# top25_spirit_plotly <- ggplotly(top25_spirit_plot, tooltip = "text")
+# 
+# top25_spirit_plotly
 ```
 
 ```{r patchwork}
