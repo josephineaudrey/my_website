@@ -87,8 +87,6 @@ top25_beer_plot <- top25_beer %>%
     title = "Top 25 Beer Consuming Countries", subtitle = "Namibia, Czech Republic, & Gabon drink most beer", caption = "Source: World Health Organization (GISAH), 2010") + # add labels to axis and title
   NULL
 
-top25_beer_plot
-
 # convert into interactive graph
 top25_beer_plotly <- ggplotly(top25_beer_plot, tooltip = "text")
 
@@ -116,12 +114,11 @@ top25_wine_plot <- top25_wine %>%
     title = "Top 25 Wine Consuming Countries", subtitle = "France, Portugal, and Andorra drink most wine", caption = "Source: World Health Organization (GISAH), 2010") + # add labels to axis and title
   NULL
 
-top25_wine_plot
 
 # convert into interactive graph
-# top25_wine_plotly <- ggplotly(top25_wine_plot, tooltip = "text")
-# 
-# top25_wine_plotly
+top25_wine_plotly <- ggplotly(top25_wine_plot, tooltip = "text")
+
+top25_wine_plotly
 
 ```
 
@@ -147,9 +144,9 @@ top25_spirit_plot <- top25_spirit %>%
 top25_spirit_plot
 
 # convert into interactive graph
-# top25_spirit_plotly <- ggplotly(top25_spirit_plot, tooltip = "text")
-# 
-# top25_spirit_plotly
+top25_spirit_plotly <- ggplotly(top25_spirit_plot, tooltip = "text")
+
+top25_spirit_plotly
 ```
 
 ```{r patchwork}
@@ -165,15 +162,15 @@ top25_beer_plot + top25_wine_plot + top25_spirit_plot
 - In the spirits consumption ranking, six of the top 25 are island countries in the Caribbean and the Pacific, and 11 of the top 25 are East European countries. This conforms to the origins of two very famous spirit types - rum and vodka.
 
 ## Summary
-```{r}
+```{r, include=FALSE}
 
-# library(choroplethr)
-# 
-# # filtering the year 2007 for population by country
-# plotdata <- drinks %>%
-#   rename(
-#          value = pop) %>%
-#   mutate(region = tolower(country)) 
+library(choroplethr)
+
+# filtering the year 2007 for population by country
+plotdata <- drinks %>%
+  rename(
+         value = pop) %>%
+  mutate(region = tolower(country))
 # 
 # #creating a country-level choropleth map
 # 

@@ -1,0 +1,367 @@
+---
+title: 'Alcohol consumption'
+author: "Josephine Haag"
+date: "2020-09-18"
+output:
+  html_document:
+    code_folding: show
+    highlight: kate
+    number_sections: yes
+    theme: forty
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
+
+
+<div id="where-do-people-drink-the-most-beer-wine-and-spirits" class="section level1">
+<h1>Where Do People Drink The Most Beer, Wine And Spirits?</h1>
+<pre class="r"><code>skim(drinks)</code></pre>
+<table>
+<caption>(#tab:glimpse_skim_data)Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">drinks</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">193</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">5</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">4</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">country</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">193</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">beer_servings</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">106.16</td>
+<td align="right">101.14</td>
+<td align="right">0</td>
+<td align="right">20.0</td>
+<td align="right">76.0</td>
+<td align="right">188.0</td>
+<td align="right">376.0</td>
+<td align="left">▇▃▂▂▁</td>
+</tr>
+<tr class="even">
+<td align="left">spirit_servings</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">80.99</td>
+<td align="right">88.28</td>
+<td align="right">0</td>
+<td align="right">4.0</td>
+<td align="right">56.0</td>
+<td align="right">128.0</td>
+<td align="right">438.0</td>
+<td align="left">▇▃▂▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">wine_servings</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">49.45</td>
+<td align="right">79.70</td>
+<td align="right">0</td>
+<td align="right">1.0</td>
+<td align="right">8.0</td>
+<td align="right">59.0</td>
+<td align="right">370.0</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">total_litres_of_pure_alcohol</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4.72</td>
+<td align="right">3.77</td>
+<td align="right">0</td>
+<td align="right">1.3</td>
+<td align="right">4.2</td>
+<td align="right">7.2</td>
+<td align="right">14.4</td>
+<td align="left">▇▃▅▃▁</td>
+</tr>
+</tbody>
+</table>
+<p>There are no missing values</p>
+<div id="beer" class="section level2">
+<h2>Beer</h2>
+<pre class="r"><code># filter for top 25 beer consuming countries
+top25_beer &lt;- drinks %&gt;% 
+  top_n(25, beer_servings)  # rank top 25 by beer servings
+
+top25_beer_plot &lt;- top25_beer %&gt;%
+  ggplot(aes(
+    x = beer_servings,
+    y = reorder(country,beer_servings),
+    text = paste0(country, &quot;, &quot;, beer_servings, &quot; servings&quot;) # order countries by beer servings
+  )) +
+  geom_col(stat = &quot;identity&quot;, width = 0.8, fill = &quot;#feb24c&quot;) + # adapt bars and set a color to beer
+  labs(
+    x = &quot;Beer Servings&quot;, 
+    y = &quot;&quot;, 
+    title = &quot;Top 25 Beer Consuming Countries&quot;, subtitle = &quot;Namibia, Czech Republic, &amp; Gabon drink most beer&quot;, caption = &quot;Source: World Health Organization (GISAH), 2010&quot;) + # add labels to axis and title
+  NULL
+
+top25_beer_plot</code></pre>
+<p><img src="/blogs/alcohol_files/figure-html/beer_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># convert into interactive graph
+top25_beer_plotly &lt;- ggplotly(top25_beer_plot, tooltip = &quot;text&quot;)
+
+top25_beer_plotly</code></pre>
+<div id="htmlwidget-1" style="width:648px;height:648px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"data":[{"orientation":"v","width":[245,261,279,295,263,245,361,263,347,346,313,281,343,376,251,306,285,343,297,247,283,270,284,249,333],"base":[0.6,5.6,9.6,14.6,6.6,1.6,23.6,7.6,22.6,21.6,17.6,10.6,19.6,24.6,4.6,16.6,13.6,20.6,15.6,2.6,11.6,8.6,12.6,3.6,18.6],"x":[122.5,130.5,139.5,147.5,131.5,122.5,180.5,131.5,173.5,173,156.5,140.5,171.5,188,125.5,153,142.5,171.5,148.5,123.5,141.5,135,142,124.5,166.5],"y":[0.8,0.800000000000001,0.800000000000001,0.800000000000001,0.800000000000001,0.8,0.799999999999997,0.800000000000001,0.799999999999997,0.799999999999997,0.799999999999997,0.800000000000001,0.799999999999997,0.799999999999997,0.800000000000001,0.799999999999997,0.800000000000001,0.799999999999997,0.799999999999999,0.8,0.800000000000001,0.800000000000001,0.800000000000001,0.8,0.799999999999997],"text":["Andorra, 245 servings","Australia, 261 servings","Austria, 279 servings","Belgium, 295 servings","Belize, 263 servings","Brazil, 245 servings","Czech Republic, 361 servings","Finland, 263 servings","Gabon, 347 servings","Germany, 346 servings","Ireland, 313 servings","Latvia, 281 servings","Lithuania, 343 servings","Namibia, 376 servings","Netherlands, 251 servings","Palau, 306 servings","Panama, 285 servings","Poland, 343 servings","Romania, 297 servings","Russian Federation, 247 servings","Serbia, 283 servings","Slovenia, 270 servings","Spain, 284 servings","USA, 249 servings","Venezuela, 333 servings"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(254,178,76,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.0983810709838,"r":7.97011207970112,"b":40.6475716064757,"l":126.724782067248},"plot_bgcolor":"rgba(250,247,242,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022},"title":{"text":"<b> Top 25 Beer Consuming Countries <\/b>","font":{"color":"rgba(91,79,65,1)","family":"","size":19.1282689912827},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-18.8,394.8],"tickmode":"array","ticktext":["0","100","200","300"],"tickvals":[0,100,200,300],"categoryorder":"array","categoryarray":["0","100","200","300"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Beer Servings","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,25.6],"tickmode":"array","ticktext":["Andorra","Brazil","Russian Federation","USA","Netherlands","Australia","Belize","Finland","Slovenia","Austria","Latvia","Serbia","Spain","Panama","Belgium","Romania","Palau","Ireland","Venezuela","Lithuania","Poland","Germany","Gabon","Czech Republic","Namibia"],"tickvals":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],"categoryorder":"array","categoryarray":["Andorra","Brazil","Russian Federation","USA","Netherlands","Australia","Belize","Finland","Slovenia","Austria","Latvia","Serbia","Spain","Panama","Belgium","Romania","Palau","Ireland","Venezuela","Lithuania","Poland","Germany","Gabon","Czech Republic","Namibia"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"rgba(255,255,255,1)","borderwidth":1.88976377952756,"font":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"59044be01f38":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"59044be01f38","visdat":{"59044be01f38":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="wine" class="section level2">
+<h2>Wine</h2>
+<pre class="r"><code># filter for top 25 wine consuming countries
+top25_wine &lt;- drinks %&gt;% 
+  top_n(25, wine_servings) %&gt;%
+  arrange(desc(wine_servings)) # rank top 25 by wine servings
+
+top25_wine_plot &lt;- top25_wine %&gt;%
+  ggplot(aes(
+    x = wine_servings,
+    y = reorder(country, wine_servings), # order countries by wine servings
+    text = paste0(country, &quot;, &quot;, wine_servings, &quot; servings&quot;) # add text for ggplotly
+  )) +
+  geom_col(stat = &quot;identity&quot;, width = 0.8, fill = &quot;#a50f15&quot;) + # adapt bars and set a color to (red) wine
+  labs(
+    x = &quot;Wine Servings&quot;, 
+    y = &quot;&quot;, 
+    title = &quot;Top 25 Wine Consuming Countries&quot;, subtitle = &quot;France, Portugal, and Andorra drink most wine&quot;, caption = &quot;Source: World Health Organization (GISAH), 2010&quot;) + # add labels to axis and title
+  NULL
+
+top25_wine_plot</code></pre>
+<p><img src="/blogs/alcohol_files/figure-html/wine_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># convert into interactive graph
+# top25_wine_plotly &lt;- ggplotly(top25_wine_plot, tooltip = &quot;text&quot;)
+# 
+# top25_wine_plotly</code></pre>
+</div>
+<div id="spirit" class="section level2">
+<h2>Spirit</h2>
+<pre class="r"><code># filter for top 25 spirit consuming countries
+top25_spirit &lt;- drinks %&gt;% 
+  top_n(25, spirit_servings)  # rank top 25 by spirit servings
+
+top25_spirit_plot &lt;- top25_spirit %&gt;%
+  ggplot(aes(
+    x = spirit_servings,
+    y = reorder(country,spirit_servings), # order countries by spirit servings
+    text = paste0(country, &quot;, &quot;,spirit_servings, &quot; servings&quot;) # add text for ggplotly
+  )) +
+  geom_col(stat = &quot;identity&quot;, width = 0.8, fill = &quot;#896045&quot;) + # adapt bars and set a color to spirit (rum)
+  labs(
+    x = &quot;Spirit Servings&quot;, 
+    y = &quot;&quot;, 
+    title = &quot;Top 25 Spirit Consuming Countries&quot;, subtitle = &quot;Granada, Belarus, and Russia drink most spirit&quot;, caption = &quot;Source: World Health Organization (GISAH), 2010&quot;) + # add labels to axis and title
+  NULL
+
+top25_spirit_plot</code></pre>
+<p><img src="/blogs/alcohol_files/figure-html/spirit_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># convert into interactive graph
+# top25_spirit_plotly &lt;- ggplotly(top25_spirit_plot, tooltip = &quot;text&quot;)
+# 
+# top25_spirit_plotly</code></pre>
+<pre class="r"><code># combine the three plots next to each other
+top25_beer_plot + top25_wine_plot + top25_spirit_plot </code></pre>
+<p><img src="/blogs/alcohol_files/figure-html/patchwork-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>IMPLICATIONS</p>
+</blockquote>
+<ul>
+<li>In the wine consumption rankings, 9 of the top 10 are European countries. Most areas of Europe (especially the low latitudes) are very suitable for growing grapes due to sufficient sunlight and fertile soil. The typical ones are Southern France, Portugal, Andorra, Italy, and Greece. This may develop the people’s habit of drinking wine. Compared to wine, the high beer consuming countries are mainly in higher latitudes (north of the Alps), since wheat is widely planted and is an important raw material for beer in these countries. In addition, the beer ranking includes the most continents among other liquors, which may implicate that beer is the most widely accepted and accessible alcohol in the world.</li>
+<li>In the spirits consumption ranking, six of the top 25 are island countries in the Caribbean and the Pacific, and 11 of the top 25 are East European countries. This conforms to the origins of two very famous spirit types - rum and vodka.</li>
+</ul>
+</div>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<pre class="r"><code># library(choroplethr)
+# 
+# # filtering the year 2007 for population by country
+# plotdata &lt;- drinks %&gt;%
+#   rename(
+#          value = pop) %&gt;%
+#   mutate(region = tolower(country)) 
+# 
+# #creating a country-level choropleth map
+# 
+# p&lt;-country_choropleth(plotdata,aes(x=long, y=lat, size=pop, fill=country),
+#                    num_colors=9) +
+#   scale_fill_brewer(palette=&quot;YlOrRd&quot;) +
+#   labs(title = &quot;Population by country&quot;,
+#        subtitle = &quot;Gapminder 2007 data&quot;,
+#        caption = &quot;source: https://www.gapminder.org&quot;,
+#        fill = &quot;Population&quot;) +
+#    theme_ipsum()
+# 
+# # making the plot interactive 
+# p &lt;- ggplotly(p)
+# p
+# ```
+# 
+# 
+# ```{r}
+# # install.packages(c(&quot;cowplot&quot;, &quot;googleway&quot;, &quot;ggplot2&quot;, &quot;ggrepel&quot;,
+# # &quot;ggspatial&quot;, &quot;libwgeom&quot;, &quot;sf&quot;, &quot;rnaturalearth&quot;, &quot;rnaturalearthdata&quot;)
+# #
+# # library(&quot;ggplot2&quot;)
+# # theme_set(theme_bw())
+# # library(&quot;sf&quot;)
+# # library(&quot;rnaturalearth&quot;)
+# # library(&quot;rnaturalearthdata&quot;)
+# 
+# 
+# map.world &lt;- map_data(&quot;world&quot;)
+# 
+# # INSPECT
+# as.factor(drinks$country) %&gt;% levels()
+# 
+# # RECODE NAMES
+# # drinks$country &lt;- recode(drinks$country
+# #                                   ,&#39;United States&#39; = &#39;USA&#39;
+# #                                   ,&#39;United Kingdom&#39; = &#39;UK&#39;
+# #         )
+# 
+# head(map.world)
+# 
+# # LEFT JOIN
+# map.world_joined &lt;- left_join(map.world, top25_beer, by = c(&#39;region&#39; = &#39;country&#39;))
+# 
+# map.world_joined %&gt;% 
+#   mutate(beer_yes = ifelse(
+#     beer_servings &gt; 244, 
+#     &quot;beer&quot;, 
+#     &quot;&quot;))
+# 
+# # df.top_beer &lt;- data.frame(country = c(top25_beer$country),stringsAsFactors = F)
+# # glimpse(df.top_beer)
+# 
+# #--------
+# # GEOCODE
+# #--------
+# 
+# geocode.country_points &lt;- geocode(df.top_beer$country)
+# 
+# df.top_beer &lt;- cbind(df.top_beer,geocode.top_beer)
+# 
+# # INSPECT
+# print(df.top_beer)
+# 
+# 
+# ggplot() +
+#   geom_polygon(data = map.world_joined, aes(x = long, y = lat, group = group, fill = &quot;beer_yes&quot;)) +
+#   geom_point(data = map.world_joined, aes(x = long, y = lat), color = &quot;red&quot;) +
+#   scale_fill_manual(values = c(&quot;blue&quot;,&quot;white&quot;)) +
+#   labs(title = &#39;Countries with highest  alcohol consumption&#39;
+#        ,subtitle = &quot;find source&quot;) +
+#   theme(text = element_text(family = &quot;Gill Sans&quot;, color = &quot;#FFFFFF&quot;)
+#         ,panel.background = element_rect(fill = &quot;#444444&quot;)
+#         ,plot.background = element_rect(fill = &quot;#444444&quot;)
+#         ,panel.grid = element_blank()
+#         ,plot.title = element_text(size = 30)
+#         ,plot.subtitle = element_text(size = 10)
+#         ,axis.text = element_blank()
+#         ,axis.title = element_blank()
+#         ,axis.ticks = element_blank()
+#         ,legend.position = &quot;none&quot;
+#         )
+# 
+# 
+# 
+# # ggplot(data = drinks) +
+# #     geom_sf()
+# #
+# # ggplot(data = world) +
+# #     geom_sf(aes(fill = beer_servings)) +
+# #     scale_fill_viridis_c(option = &quot;plasma&quot;)
+# #
+# # mapped_data &lt;- joinCountryData2Map(beer_servings, joinCode = &quot;ISO3&quot;,
+# #     nameJoinColumn = &quot;country&quot;)</code></pre>
+</div>
+</div>

@@ -1,0 +1,242 @@
+---
+title: 'Social Media'
+author: "Josephine Haag"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: show
+    highlight: default
+    number_sections: yes
+    theme: flatly
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+# SOCIAL MEDIA
+
+```{r load-libraries, echo=FALSE, include=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(GGally)
+library(readxl)
+library(here)
+library(skimr)
+library(janitor)
+library(broom)
+library(tidyquant)
+library(infer)
+library(openintro)
+```
+
+```{r, setup, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+library(ggthemr)
+ggthemr('dust')
+
+if (!requireNamespace("devtools", quietly = TRUE))
+  install.packages("devtools")
+
+devtools::install_github("calligross/ggthemeassist")
+```
+
+
+The [General Social Survey (GSS)](http://www.gss.norc.org/) gathers data on American society in order to monitor and explain trends in attitudes, behaviours, and attributes. Many trends have been tracked for decades, so one can see the evolution of attitudes, etc in American Society.
+
+```{r, read_gss_data, cache=TRUE, include=FALSE}
+gss <- read_csv(here::here("content", "blogs", "smallgss2016.csv"), 
+                na = c("", "Don't know",
+                       "No answer", "Not applicable"))
+glimpse(gss)
+```
+
+## Instagram and Snapchat, by sex
+
+Can we estimate the *population* proportion of Snapchat or Instagram users in 2016?
+
+```{r}
+gss_snap_insta <- gss %>%
+  # create the new variable for snap_insta
+  mutate(snap_insta = case_when(
+    snapchat == "Yes" | instagrm == "Yes" ~ "Yes", 
+    snapchat == "No" & instagrm == "No" ~ "No",
+    TRUE ~ NA_character_)) 
+  
+# calculate the proportion
+gss_prop <- gss_snap_insta %>%
+  filter(!is.na(snap_insta)) %>% 
+  group_by(snap_insta) %>% 
+  summarise(count = n()) %>% 
+  mutate(prop = count/sum(count)) 
+gss_prop
+
+# percentile_ci
+snap_insta_formula_ci <- gss_snap_insta %>%
+  group_by(sex) %>%
+  # using the CI formula m +- z * se
+  summarize(p_hat = prop(snap_insta == "Yes"),
+            count = n(),
+            se = sqrt((p_hat * (1 - p_hat)) / count),
+            t_critical = qt(0.975, count-1),
+            margin_of_error = t_critical*se,
+            lower_95 = p_hat - margin_of_error,
+            upper_95 = p_hat + margin_of_error)
+snap_insta_formula_ci
+
+# additional plot for practice
+histogram_si <- ggplot(snap_insta_formula_ci,  
+       aes(x = sex,
+           y = p_hat,
+           colour = sex)) +
+   geom_errorbar(aes(ymin = lower_95,
+                     ymax = upper_95),
+                     width = 0.05,
+                     size  = 0.5) +
+   geom_point(shape = 15,
+              size  = 4) +
+   scale_y_continuous(limits=c(0,1)) +
+   theme_bw() +
+   theme(axis.title   = element_text(face  = "bold")) +
+   labs(x = "Gender",
+     y = "",
+   title = "Women are more likely than men to use Snapchat or Instagram in 2016") +
+   theme(legend.position = 'none') + 
+   NULL
+histogram_si
+```
+
+
+## Twitter, by education level
+
+Can we estimate the *population* proportion of Twitter users by education level in 2016?. 
+
+```{r}
+# turn degree from a character variable into a factor variable 
+gss_factor <- gss %>%
+  mutate(degree = factor(degree, order = TRUE, levels = c("Lt high school", "High school", "Junior college", "Bachelor", "Graduate")))
+
+# create the new variable bachelor_graduate and assign values based on criteria below:
+gss_degree <- gss_factor %>%
+  mutate(bachelor_graduate = case_when(
+    degree %in% c("Bachelor","Master") ~ "Yes", 
+    degree %in% c("Lt high school", "High school", "Junior college") ~ "No",
+    TRUE ~ "NA"
+    )) 
+# filter out NAs and filter for bachelor and graduates
+gss_bachelor <- gss_degree %>%
+  filter(bachelor_graduate == "Yes")
+
+# calculate the proportion of `bachelor_graduate` using twitter
+gss_twitter_prop <- gss_bachelor %>%
+  group_by(twitter) %>%
+  filter(twitter != "NA") %>% 
+  summarize(n = n()) %>%
+  mutate(prop_t = n/sum(n))
+  
+gss_twitter_prop
+
+# construct CI for `bachelor_graduate` (not) using twitter (but with the NAs in the 100 % )
+twitter_formula_ci <- gss_twitter_prop %>%
+  filter(twitter != "NA") %>%
+   # use the CI formula m +- z * se
+  summarize(twitter = twitter,
+            p_hat_t = prop_t,
+            # se for difference in proportions is sqrt(p(1-p)/n)
+            se_t = sqrt((p_hat_t *(1-p_hat_t))/n),
+            count_t = n,
+            t_critical_t = qt(0.975, count_t-1),
+            margin_of_error_t = t_critical_t*se_t,
+            lower_95_t = p_hat_t - margin_of_error_t,
+            upper_95_t = p_hat_t + margin_of_error_t)
+twitter_formula_ci
+  
+# check if Confidence Intervals overlap
+barchart_t <- ggplot(twitter_formula_ci,  
+       aes(x = twitter,
+           y = p_hat_t,
+           colour = "#1DA1F2")) +
+   geom_errorbar(aes(ymin = lower_95_t,
+                     ymax = upper_95_t),
+                     width = 0.05,
+                     size  = 0.5) +
+   geom_point(shape = 15,
+              size  = 4) +
+   scale_y_continuous(limits=c(0,1)) +
+   theme_bw() +
+   theme(axis.title = element_text(face  = "bold")) +
+   labs(x = "Twitter usage",
+        y = "",
+   title = "Twitter usage among people with a bachelor or graduate degree in 2016") +
+   theme(legend.position = 'none') + 
+   NULL
+
+barchart_t
+```
+
+
+## Email usage
+
+Can we estimate the *population* parameter on time spent on email weekly?
+
+2. Visualise the distribution of this new variable. Find the mean and the median number of minutes respondents spend on email weekly. Is the mean or the median a better measure of the typical among of time Americans spend on email weekly? Why?
+
+Answer: The median is a better measure than the mean for the typical amount of time Americans spend on email weekly since the mean is more sensitive to outliers than the median.
+
+3. Using the `infer` package, calculate a 95% bootstrap confidence interval for the mean amount of time Americans spend on email weekly. Interpret this interval in context of the data, reporting its endpoints in “humanized” units (e.g. instead of 108 minutes, report 1 hr and 8 minutes). If you get a result that seems a bit odd, discuss why you think this might be the case.
+
+Answer: The confidence interval and the mean are quite high because, as mentioned above, the mean is very sensitive to the  outlier in the data set. Thus, the values are higher than one might probably expect.
+
+4. Would you expect a 99% confidence interval to be wider or narrower than the interval you calculated above? Explain your reasoning.
+
+Answer: A 99% confidence interval would be wider than a 95% confidence interval since you have to be more confident that the true value (in the case email minutes) falls within the interval we will need to allow more potential values within the interval. The confidence level most commonly adopted is 95%.
+
+```{r}
+# create new variable email
+gss_email <- gss %>% 
+  filter(emailmin != "NA", emailhr != "NA") %>%
+  mutate(emailmin = as.numeric(emailmin), emailhr = as.numeric(emailhr)) %>%
+  mutate(email = emailhr*60 + emailmin)
+# visualise the distribution
+plot_email <- ggplot(gss_email, 
+  aes(x = email)) + 
+  geom_density() + 
+  geom_vline(aes(xintercept=mean(email, na.rm = T)),   # Ignore NA values for mean
+               color="red", linetype="dashed", size=1) +
+  geom_vline(aes(xintercept=median(email, na.rm = T)),   # Ignore NA values for mean
+               color="blue", linetype="dashed", size=1) +
+  annotate("text", x = 800, y = 0.0025, label = "mean", color="red") +
+  annotate("text", x = 500, y = 0.00261, label = "median", color="blue") +
+  theme_bw()+
+  theme(legend.position = "none") +
+  labs(
+    title = "Right-skewed distribution of time spent on emails by US adults",
+    x = "Minutes spent on emails per week",
+    y = " ") +
+  NULL
+plot_email
+# calculate a 95% bootstrap confidence interval for the mean
+boot_email <- gss_email %>% 
+  specify(response = email) %>% 
+  generate(reps = 1000, type = "bootstrap") %>% 
+  calculate(stat = "mean") 
+  
+boot_email
+# 95% CI and humanize units
+percentile_ci <- boot_email %>%
+  get_confidence_interval(level = 0.95, type = "percentile") %>%
+  mutate(lower_ci_hum = lower_ci %/% 60 + (lower_ci %% 60)/100, upper_ci_hum = upper_ci %/% 60 + (upper_ci %% 60)/100)
+percentile_ci
+visualise(boot_email)
+```

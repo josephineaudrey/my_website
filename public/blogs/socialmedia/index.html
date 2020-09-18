@@ -1,0 +1,353 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="This is my individual portfolio">
+	<meta name="author" content="Josephine A. Haag">
+	<meta name="generator" content="Hugo 0.74.3" />
+	<title>Social Media &middot; Portfolio website of Josephine Haag</title>
+	<!-- Stylesheets -->
+	
+	<link rel="stylesheet" href="/css/main.css"/>
+	
+	
+
+	
+
+	<!-- Custom Fonts -->
+	<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="js/ie/html5shiv.js"></script>
+	<script src="js/ie/html5shiv.jsrespond.min.js"></script>
+	<![endif]-->
+</head>
+
+    <body>
+
+    <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Header -->
+    <header id="header" class="alt">
+        <a href="/" class="logo"><strong>Josephine&#39;s Portfolio</strong> <span>This is what I do</span></a>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+<!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            
+                <li><a href="/">Home</a></li>
+            
+                <li><a href="/blogs">Data Analysis</a></li>
+            
+                <li><a href="/"></a></li>
+            
+                <li><a href="/"></a></li>
+            
+
+        </ul>
+        <ul class="actions vertical">
+            
+                <li><a href="/blogs" class="button special fit">See more</a></li>
+            
+            
+                <li><a href="/" class="button fit"></a></li>
+            
+        </ul>
+    </nav>
+
+        <!-- Main -->
+            <div id="main" class="alt">
+
+                
+                    <section id="one">
+                        <div class="inner">
+                            <header class="major">
+                                <h1>Social Media</h1>
+                            </header>
+                            
+                            
+
+
+<div id="social-media" class="section level1">
+<h1>SOCIAL MEDIA</h1>
+<p>The <a href="http://www.gss.norc.org/">General Social Survey (GSS)</a> gathers data on American society in order to monitor and explain trends in attitudes, behaviours, and attributes. Many trends have been tracked for decades, so one can see the evolution of attitudes, etc in American Society.</p>
+<div id="instagram-and-snapchat-by-sex" class="section level2">
+<h2>Instagram and Snapchat, by sex</h2>
+<p>Can we estimate the <em>population</em> proportion of Snapchat or Instagram users in 2016?</p>
+<pre class="r"><code>gss_snap_insta &lt;- gss %&gt;%
+  # create the new variable for snap_insta
+  mutate(snap_insta = case_when(
+    snapchat == &quot;Yes&quot; | instagrm == &quot;Yes&quot; ~ &quot;Yes&quot;, 
+    snapchat == &quot;No&quot; &amp; instagrm == &quot;No&quot; ~ &quot;No&quot;,
+    TRUE ~ NA_character_)) 
+  
+# calculate the proportion
+gss_prop &lt;- gss_snap_insta %&gt;%
+  filter(!is.na(snap_insta)) %&gt;% 
+  group_by(snap_insta) %&gt;% 
+  summarise(count = n()) %&gt;% 
+  mutate(prop = count/sum(count)) 
+gss_prop</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   snap_insta count  prop
+##   &lt;chr&gt;      &lt;int&gt; &lt;dbl&gt;
+## 1 No           858 0.625
+## 2 Yes          514 0.375</code></pre>
+<pre class="r"><code># percentile_ci
+snap_insta_formula_ci &lt;- gss_snap_insta %&gt;%
+  group_by(sex) %&gt;%
+  # using the CI formula m +- z * se
+  summarize(p_hat = prop(snap_insta == &quot;Yes&quot;),
+            count = n(),
+            se = sqrt((p_hat * (1 - p_hat)) / count),
+            t_critical = qt(0.975, count-1),
+            margin_of_error = t_critical*se,
+            lower_95 = p_hat - margin_of_error,
+            upper_95 = p_hat + margin_of_error)
+snap_insta_formula_ci</code></pre>
+<pre><code>## # A tibble: 2 x 8
+##   sex    p_hat count     se t_critical margin_of_error lower_95 upper_95
+##   &lt;chr&gt;  &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;      &lt;dbl&gt;           &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+## 1 Female 0.419  1591 0.0124       1.96          0.0243    0.394    0.443
+## 2 Male   0.318  1276 0.0130       1.96          0.0256    0.293    0.344</code></pre>
+<pre class="r"><code># additional plot for practice
+histogram_si &lt;- ggplot(snap_insta_formula_ci,  
+       aes(x = sex,
+           y = p_hat,
+           colour = sex)) +
+   geom_errorbar(aes(ymin = lower_95,
+                     ymax = upper_95),
+                     width = 0.05,
+                     size  = 0.5) +
+   geom_point(shape = 15,
+              size  = 4) +
+   scale_y_continuous(limits=c(0,1)) +
+   theme_bw() +
+   theme(axis.title   = element_text(face  = &quot;bold&quot;)) +
+   labs(x = &quot;Gender&quot;,
+     y = &quot;&quot;,
+   title = &quot;Women are more likely than men to use Snapchat or Instagram in 2016&quot;) +
+   theme(legend.position = &#39;none&#39;) + 
+   NULL
+histogram_si</code></pre>
+<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-1-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="twitter-by-education-level" class="section level2">
+<h2>Twitter, by education level</h2>
+<p>Can we estimate the <em>population</em> proportion of Twitter users by education level in 2016?.</p>
+<pre class="r"><code># turn degree from a character variable into a factor variable 
+gss_factor &lt;- gss %&gt;%
+  mutate(degree = factor(degree, order = TRUE, levels = c(&quot;Lt high school&quot;, &quot;High school&quot;, &quot;Junior college&quot;, &quot;Bachelor&quot;, &quot;Graduate&quot;)))
+
+# create the new variable bachelor_graduate and assign values based on criteria below:
+gss_degree &lt;- gss_factor %&gt;%
+  mutate(bachelor_graduate = case_when(
+    degree %in% c(&quot;Bachelor&quot;,&quot;Master&quot;) ~ &quot;Yes&quot;, 
+    degree %in% c(&quot;Lt high school&quot;, &quot;High school&quot;, &quot;Junior college&quot;) ~ &quot;No&quot;,
+    TRUE ~ &quot;NA&quot;
+    )) 
+# filter out NAs and filter for bachelor and graduates
+gss_bachelor &lt;- gss_degree %&gt;%
+  filter(bachelor_graduate == &quot;Yes&quot;)
+
+# calculate the proportion of `bachelor_graduate` using twitter
+gss_twitter_prop &lt;- gss_bachelor %&gt;%
+  group_by(twitter) %&gt;%
+  filter(twitter != &quot;NA&quot;) %&gt;% 
+  summarize(n = n()) %&gt;%
+  mutate(prop_t = n/sum(n))
+  
+gss_twitter_prop</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   twitter     n prop_t
+##   &lt;chr&gt;   &lt;int&gt;  &lt;dbl&gt;
+## 1 No        232  0.771
+## 2 Yes        69  0.229</code></pre>
+<pre class="r"><code># construct CI for `bachelor_graduate` (not) using twitter (but with the NAs in the 100 % )
+twitter_formula_ci &lt;- gss_twitter_prop %&gt;%
+  filter(twitter != &quot;NA&quot;) %&gt;%
+   # use the CI formula m +- z * se
+  summarize(twitter = twitter,
+            p_hat_t = prop_t,
+            # se for difference in proportions is sqrt(p(1-p)/n)
+            se_t = sqrt((p_hat_t *(1-p_hat_t))/n),
+            count_t = n,
+            t_critical_t = qt(0.975, count_t-1),
+            margin_of_error_t = t_critical_t*se_t,
+            lower_95_t = p_hat_t - margin_of_error_t,
+            upper_95_t = p_hat_t + margin_of_error_t)
+twitter_formula_ci</code></pre>
+<pre><code>## # A tibble: 2 x 8
+##   twitter p_hat_t   se_t count_t t_critical_t margin_of_error… lower_95_t
+##   &lt;chr&gt;     &lt;dbl&gt;  &lt;dbl&gt;   &lt;int&gt;        &lt;dbl&gt;            &lt;dbl&gt;      &lt;dbl&gt;
+## 1 No        0.771 0.0276     232         1.97           0.0544      0.716
+## 2 Yes       0.229 0.0506      69         2.00           0.101       0.128
+## # … with 1 more variable: upper_95_t &lt;dbl&gt;</code></pre>
+<pre class="r"><code># check if Confidence Intervals overlap
+barchart_t &lt;- ggplot(twitter_formula_ci,  
+       aes(x = twitter,
+           y = p_hat_t,
+           colour = &quot;#1DA1F2&quot;)) +
+   geom_errorbar(aes(ymin = lower_95_t,
+                     ymax = upper_95_t),
+                     width = 0.05,
+                     size  = 0.5) +
+   geom_point(shape = 15,
+              size  = 4) +
+   scale_y_continuous(limits=c(0,1)) +
+   theme_bw() +
+   theme(axis.title = element_text(face  = &quot;bold&quot;)) +
+   labs(x = &quot;Twitter usage&quot;,
+        y = &quot;&quot;,
+   title = &quot;Twitter usage among people with a bachelor or graduate degree in 2016&quot;) +
+   theme(legend.position = &#39;none&#39;) + 
+   NULL
+
+barchart_t</code></pre>
+<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-2-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="email-usage" class="section level2">
+<h2>Email usage</h2>
+<p>Can we estimate the <em>population</em> parameter on time spent on email weekly?</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Visualise the distribution of this new variable. Find the mean and the median number of minutes respondents spend on email weekly. Is the mean or the median a better measure of the typical among of time Americans spend on email weekly? Why?</li>
+</ol>
+<p>Answer: The median is a better measure than the mean for the typical amount of time Americans spend on email weekly since the mean is more sensitive to outliers than the median.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Using the <code>infer</code> package, calculate a 95% bootstrap confidence interval for the mean amount of time Americans spend on email weekly. Interpret this interval in context of the data, reporting its endpoints in “humanized” units (e.g. instead of 108 minutes, report 1 hr and 8 minutes). If you get a result that seems a bit odd, discuss why you think this might be the case.</li>
+</ol>
+<p>Answer: The confidence interval and the mean are quite high because, as mentioned above, the mean is very sensitive to the outlier in the data set. Thus, the values are higher than one might probably expect.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Would you expect a 99% confidence interval to be wider or narrower than the interval you calculated above? Explain your reasoning.</li>
+</ol>
+<p>Answer: A 99% confidence interval would be wider than a 95% confidence interval since you have to be more confident that the true value (in the case email minutes) falls within the interval we will need to allow more potential values within the interval. The confidence level most commonly adopted is 95%.</p>
+<pre class="r"><code># create new variable email
+gss_email &lt;- gss %&gt;% 
+  filter(emailmin != &quot;NA&quot;, emailhr != &quot;NA&quot;) %&gt;%
+  mutate(emailmin = as.numeric(emailmin), emailhr = as.numeric(emailhr)) %&gt;%
+  mutate(email = emailhr*60 + emailmin)
+# visualise the distribution
+plot_email &lt;- ggplot(gss_email, 
+  aes(x = email)) + 
+  geom_density() + 
+  geom_vline(aes(xintercept=mean(email, na.rm = T)),   # Ignore NA values for mean
+               color=&quot;red&quot;, linetype=&quot;dashed&quot;, size=1) +
+  geom_vline(aes(xintercept=median(email, na.rm = T)),   # Ignore NA values for mean
+               color=&quot;blue&quot;, linetype=&quot;dashed&quot;, size=1) +
+  annotate(&quot;text&quot;, x = 800, y = 0.0025, label = &quot;mean&quot;, color=&quot;red&quot;) +
+  annotate(&quot;text&quot;, x = 500, y = 0.00261, label = &quot;median&quot;, color=&quot;blue&quot;) +
+  theme_bw()+
+  theme(legend.position = &quot;none&quot;) +
+  labs(
+    title = &quot;Right-skewed distribution of time spent on emails by US adults&quot;,
+    x = &quot;Minutes spent on emails per week&quot;,
+    y = &quot; &quot;) +
+  NULL
+plot_email</code></pre>
+<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-3-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># calculate a 95% bootstrap confidence interval for the mean
+boot_email &lt;- gss_email %&gt;% 
+  specify(response = email) %&gt;% 
+  generate(reps = 1000, type = &quot;bootstrap&quot;) %&gt;% 
+  calculate(stat = &quot;mean&quot;) 
+  
+boot_email</code></pre>
+<pre><code>## # A tibble: 1,000 x 2
+##    replicate  stat
+##        &lt;int&gt; &lt;dbl&gt;
+##  1         1  394.
+##  2         2  445.
+##  3         3  384.
+##  4         4  428.
+##  5         5  407.
+##  6         6  431.
+##  7         7  429.
+##  8         8  410.
+##  9         9  404.
+## 10        10  415.
+## # … with 990 more rows</code></pre>
+<pre class="r"><code># 95% CI and humanize units
+percentile_ci &lt;- boot_email %&gt;%
+  get_confidence_interval(level = 0.95, type = &quot;percentile&quot;) %&gt;%
+  mutate(lower_ci_hum = lower_ci %/% 60 + (lower_ci %% 60)/100, upper_ci_hum = upper_ci %/% 60 + (upper_ci %% 60)/100)
+percentile_ci</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   lower_ci upper_ci lower_ci_hum upper_ci_hum
+##      &lt;dbl&gt;    &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
+## 1     384.     449.         6.24         7.29</code></pre>
+<pre class="r"><code>visualise(boot_email)</code></pre>
+<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-3-2.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+
+                        </div>
+                    </section>
+            <!-- Disqus Inject -->
+                
+            </div>
+            
+        <!-- Footer -->
+            
+                <!-- Footer -->
+    <footer id="footer">
+        <div class="inner">
+            <ul class="icons">
+                
+                    <li><a href="" class="icon alt " target="_blank"><span class="label"></span></a></li>
+                
+                    <li><a href="" class="icon alt " target="_blank"><span class="label"></span></a></li>
+                
+                    <li><a href="" class="icon alt " target="_blank"><span class="label"></span></a></li>
+                
+                    <li><a href="https://www.github.com/josephineaudrey" class="icon alt fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                
+                    <li><a href="https://www.linkedin.com/josephinehaag" class="icon alt fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                
+            </ul>
+            <ul class="copyright">
+                <li>&copy; JAH Consulting</li>
+                
+                <li> <a href=""></a></li>
+                
+            </ul>
+        </div>
+    </footer>
+
+            
+        </div>
+
+    <!-- Scripts -->
+        <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.scrolly.min.js"></script>
+    <script src="/js/jquery.scrollex.min.js"></script>
+    <script src="/js/skel.min.js"></script>
+    <script src="/js/util.js"></script>
+
+    
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+
+    
+
+    
+
+    </body>
+</html>

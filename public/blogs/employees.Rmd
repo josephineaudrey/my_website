@@ -1,0 +1,307 @@
+---
+title: 'Employee Data'
+author: "Josephine Haag"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: show
+    highlight: default
+    number_sections: yes
+    theme: forty
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r, setup, include = FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+
+```
+
+```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
+# Load ggplot2, dplyr, and all the other tidyverse packages
+library(tidyverse)  
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(fivethirtyeight)
+library(here)
+library(skimr)
+library(janitor)
+library(vroom)
+library(tidyquant)
+library(patchwork)
+library(ggplot2)
+
+```
+
+# IBM HR Analytics
+
+During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers for it. 
+
+```{r loading_HR_dataset, include=FALSE}
+hr_dataset <- read_csv( "datasets_1067_1925_WA_Fn-UseC_-HR-Employee-Attrition.csv")
+glimpse(hr_dataset)
+
+```
+
+```{r cleaning_HR_dataset, include=FALSE}
+# clean data set
+hr_cleaned <- hr_dataset %>% 
+  clean_names() %>% 
+  mutate(
+    education = case_when(
+      education == 1 ~ "Below College",
+      education == 2 ~ "College",
+      education == 3 ~ "Bachelor",
+      education == 4 ~ "Master",
+      education == 5 ~ "Doctor"
+    ),
+    environment_satisfaction = case_when(
+      environment_satisfaction == 1 ~ "Low",
+      environment_satisfaction == 2 ~ "Medium",
+      environment_satisfaction == 3 ~ "High",
+      environment_satisfaction == 4 ~ "Very High"
+    ),
+    job_satisfaction = case_when(
+      job_satisfaction == 1 ~ "Low",
+      job_satisfaction == 2 ~ "Medium",
+      job_satisfaction == 3 ~ "High",
+      job_satisfaction == 4 ~ "Very High"
+    ),
+    performance_rating = case_when(
+      performance_rating == 1 ~ "Low",
+      performance_rating == 2 ~ "Good",
+      performance_rating == 3 ~ "Excellent",
+      performance_rating == 4 ~ "Outstanding"
+    ),
+    work_life_balance = case_when(
+      work_life_balance == 1 ~ "Bad",
+      work_life_balance == 2 ~ "Good",
+      work_life_balance == 3 ~ "Better",
+      work_life_balance == 4 ~ "Best"
+    )
+  ) %>% 
+  select(age, attrition, daily_rate, department,
+         distance_from_home, education,
+         gender, job_role, environment_satisfaction,
+         job_satisfaction, marital_status,
+         monthly_income, num_companies_worked, percent_salary_hike,
+         performance_rating, total_working_years,
+         work_life_balance, years_at_company,
+         years_since_last_promotion)
+
+```
+
+## Employee Retention
+
+How often do people leave the company (`attrition`)
+```{r company_attrition_rate}
+attrition_rate <- filter(hr_cleaned %>% 
+         group_by(attrition) %>% 
+         summarise(n = count(attrition)) %>% 
+         mutate(attrition_rate = (n*100)/sum(n)), attrition == "Yes") #added column for the attrition rate %
+
+attrition_rate
+
+```
+
+Answer:
+The attrition rate is 16.1%.
+
+```{r job_satisfaction}
+job_satisfaction_gender <- hr_dataset %>% 
+  group_by(Gender) %>% 
+  summarise(mean_js = mean(JobSatisfaction)) 
+         
+job_satisfaction_gender
+
+job_satisfaction_gender_plot <- hr_dataset %>%
+  ggplot(aes(x = JobSatisfaction)) +
+  geom_histogram(binwith = 1, fill = "blue") +
+  facet_wrap(~Gender) +
+  theme_minimal() +
+  NULL
+
+job_satisfaction_gender_plot
+```
+
+3. How are `job_satisfaction` and `work_life_balance` distributed? Don't just report counts, but express categories as % of total
+
+```{r job_sat_and_worklife_balance}
+job_sat <- hr_cleaned %>% 
+  group_by(job_satisfaction) %>% 
+  summarise(n = count(job_satisfaction)) %>% 
+  mutate(job_sat_perc = (n*100)/sum(n))
+
+work_life_balance <- hr_cleaned %>% 
+  group_by(work_life_balance) %>% 
+  summarise(n = count(work_life_balance)) %>% 
+  mutate(work_life_perc = (n*100)/sum(n)) %>% 
+  arrange(desc(work_life_perc))
+
+```
+
+Answer:
+
+`job_satisfaction` is right skewed, with around 60% of the values on the right.
+`work_life_balance` seems to better resemble a normal distribution, a bit skewed to the right.
+
+
+4. Is there any relationship between monthly income and education? Monthly income and gender?
+```{r monthly_income_gender_education_plots, fig.width=20}
+library(hrbrthemes)
+options("scipen"=100, "digits"=4)
+
+monthly_income_education_plot <- ggplot(hr_cleaned,
+   aes(
+     x = education, 
+     y = monthly_income 
+   )) + 
+  geom_col() +
+  theme_minimal() +
+  theme(text = element_text(size=40))+
+  labs(
+    title = "Monthly income vs. education",
+    x = "Monthly income",
+    y = "Education"
+  ) +
+  NULL
+
+monthly_income_gender_plot <- ggplot(hr_cleaned,
+   aes(
+     x = gender, 
+     y = monthly_income 
+   )) + 
+  geom_col() +
+  theme_minimal() +
+  theme(text = element_text(size=30))+
+  labs(
+    title = "Monthly income vs. gender",
+    x = "Monthly income",
+    y = "Gender"
+  ) +
+  NULL
+
+monthly_income_education_plot
+monthly_income_gender_plot
+
+```
+
+Answer:
+
+- There is an inverted U-shaped relationship between education and monthly income. Bachelors' income is higher than college's and under college's, since most of the high-payment jobs require at least bachelor's degrees. And Bachelors' income is also greater than masters' and PhDs' income, probably because given they all meet most companies' basic education requirement, bachelors always have more working experience since they step into careers earlier.
+- Male monthly incomes are higher than female. Gender inequality is still very common in job markets.
+
+
+5. Plot a boxplot of income vs job role. Make sure the highest-paid job roles appear first
+```{r income_jobrole_boxplot, fig.width=40, fig.height=20}
+
+income_jobrole_boxplot <- ggplot(hr_cleaned, 
+       aes(
+         x= reorder(job_role, -monthly_income), 
+         y = monthly_income)) + 
+  geom_boxplot() +
+  labs(
+    title = "Income per job role",
+    x = "Job role",
+    y = "Income"
+  ) +
+  theme_minimal() +
+  theme(text = element_text(size=30))+
+  NULL
+
+income_jobrole_boxplot
+
+```
+
+
+6. Calculate and plot a bar chart of the mean (or median?) income by education level.
+
+```{r barchart_income_education}
+Education_mean_income_bar <- ggplot(hr_cleaned, aes(
+    x = education, 
+    y = mean(monthly_income
+    ))) + 
+  geom_col() +
+  labs(
+    title = "Mean monthly income per education",
+    x = "Education",
+    y = "Mean monthly income"
+  ) +
+  theme_minimal() +
+  theme(text = element_text(size=10))+
+  NULL
+
+Education_median_income_bar <- ggplot(hr_cleaned, aes(
+    x = education, 
+    y = median(monthly_income
+    ))) + 
+  geom_col() +
+  labs(
+    title = "Median monthly income per education",
+    x = "Education",
+    y = "Median monthly income") +
+  theme_minimal() +
+  theme(text = element_text(size=10))+
+  NULL
+
+Education_mean_income_bar
+Education_median_income_bar
+
+```
+
+7. Plot the distribution of income by education level. Use a facet_wrap and a theme from `ggthemes`
+
+```{r distribution_by_education, fig.width=10}
+
+Monthly_income_education_distr <- ggplot(hr_cleaned, aes(
+    x = monthly_income
+  )) + 
+  geom_histogram() + 
+  facet_wrap(~education,ncol=2) + 
+  labs(
+    title = "Distribution of income by education",
+    x = "Education"
+  ) +
+  theme_economist_white() +
+  NULL
+
+Monthly_income_education_distr
+
+```
+
+
+1. Plot income vs age, faceted by `job_role`
+```{r Income_vs_age_by_jobrole}
+
+Income_vs_age_facet <- ggplot(hr_cleaned, aes(
+    x = age, 
+    y = monthly_income
+  )) + 
+  geom_col(width = 2) + 
+  facet_wrap(~job_role) +
+  labs(
+    title = "Income vs. age by job role",
+    x = "Age",
+    y = "Monthly income"
+  ) +
+  theme_minimal() +
+  NULL
+
+Income_vs_age_facet
+
+```

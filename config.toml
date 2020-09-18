@@ -116,10 +116,10 @@ disqusShortname = ""
       url = "blogs/ipsum"
 
     [[params.tiles.showcase]]
-      title = "Resume"
-      subtitle = "My experiences and education"
-      image = "pic05.jpg"
-      url = "blogs/ipsum"
+     # title = "Resume"
+     # subtitle = "My experiences and education"
+     # image = "pic05.jpg"
+     # url = "blogs/ipsum"
 
     [[params.tiles.showcase]]
       title = "The social media trap"

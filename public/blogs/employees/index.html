@@ -1,0 +1,331 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="This is my individual portfolio">
+	<meta name="author" content="Josephine A. Haag">
+	<meta name="generator" content="Hugo 0.74.3" />
+	<title>Employee Data &middot; Portfolio website of Josephine Haag</title>
+	<!-- Stylesheets -->
+	
+	<link rel="stylesheet" href="/css/main.css"/>
+	
+	
+
+	
+
+	<!-- Custom Fonts -->
+	<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="js/ie/html5shiv.js"></script>
+	<script src="js/ie/html5shiv.jsrespond.min.js"></script>
+	<![endif]-->
+</head>
+
+    <body>
+
+    <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Header -->
+    <header id="header" class="alt">
+        <a href="/" class="logo"><strong>Josephine&#39;s Portfolio</strong> <span>This is what I do</span></a>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+<!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            
+                <li><a href="/">Home</a></li>
+            
+                <li><a href="/blogs">Data Analysis</a></li>
+            
+                <li><a href="/"></a></li>
+            
+                <li><a href="/"></a></li>
+            
+
+        </ul>
+        <ul class="actions vertical">
+            
+                <li><a href="/blogs" class="button special fit">See more</a></li>
+            
+            
+                <li><a href="/" class="button fit"></a></li>
+            
+        </ul>
+    </nav>
+
+        <!-- Main -->
+            <div id="main" class="alt">
+
+                
+                    <section id="one">
+                        <div class="inner">
+                            <header class="major">
+                                <h1>Employee Data</h1>
+                            </header>
+                            
+                            
+
+
+<div id="ibm-hr-analytics" class="section level1">
+<h1>IBM HR Analytics</h1>
+<p>During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers for it.</p>
+<div id="employee-retention" class="section level2">
+<h2>Employee Retention</h2>
+<p>How often do people leave the company (<code>attrition</code>)</p>
+<pre class="r"><code>attrition_rate &lt;- filter(hr_cleaned %&gt;% 
+         group_by(attrition) %&gt;% 
+         summarise(n = count(attrition)) %&gt;% 
+         mutate(attrition_rate = (n*100)/sum(n)), attrition == &quot;Yes&quot;) #added column for the attrition rate %
+
+attrition_rate</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   attrition     n attrition_rate
+##   &lt;chr&gt;     &lt;int&gt;          &lt;dbl&gt;
+## 1 Yes         237           16.1</code></pre>
+<p>Answer:
+The attrition rate is 16.1%.</p>
+<pre class="r"><code>job_satisfaction_gender &lt;- hr_dataset %&gt;% 
+  group_by(Gender) %&gt;% 
+  summarise(mean_js = mean(JobSatisfaction)) 
+         
+job_satisfaction_gender</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   Gender mean_js
+##   &lt;chr&gt;    &lt;dbl&gt;
+## 1 Female    2.68
+## 2 Male      2.76</code></pre>
+<pre class="r"><code>job_satisfaction_gender_plot &lt;- hr_dataset %&gt;%
+  ggplot(aes(x = JobSatisfaction)) +
+  geom_histogram(binwith = 1, fill = &quot;blue&quot;) +
+  facet_wrap(~Gender) +
+  theme_minimal() +
+  NULL
+
+job_satisfaction_gender_plot</code></pre>
+<p><img src="/blogs/employees_files/figure-html/job_satisfaction-1.png" width="648" style="display: block; margin: auto;" /></p>
+<ol start="3" style="list-style-type: decimal">
+<li>How are <code>job_satisfaction</code> and <code>work_life_balance</code> distributed? Don’t just report counts, but express categories as % of total</li>
+</ol>
+<pre class="r"><code>job_sat &lt;- hr_cleaned %&gt;% 
+  group_by(job_satisfaction) %&gt;% 
+  summarise(n = count(job_satisfaction)) %&gt;% 
+  mutate(job_sat_perc = (n*100)/sum(n))
+
+work_life_balance &lt;- hr_cleaned %&gt;% 
+  group_by(work_life_balance) %&gt;% 
+  summarise(n = count(work_life_balance)) %&gt;% 
+  mutate(work_life_perc = (n*100)/sum(n)) %&gt;% 
+  arrange(desc(work_life_perc))</code></pre>
+<p>Answer:</p>
+<p><code>job_satisfaction</code> is right skewed, with around 60% of the values on the right.
+<code>work_life_balance</code> seems to better resemble a normal distribution, a bit skewed to the right.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Is there any relationship between monthly income and education? Monthly income and gender?</li>
+</ol>
+<pre class="r"><code>library(hrbrthemes)
+options(&quot;scipen&quot;=100, &quot;digits&quot;=4)
+
+monthly_income_education_plot &lt;- ggplot(hr_cleaned,
+   aes(
+     x = education, 
+     y = monthly_income 
+   )) + 
+  geom_col() +
+  theme_minimal() +
+  theme(text = element_text(size=40))+
+  labs(
+    title = &quot;Monthly income vs. education&quot;,
+    x = &quot;Monthly income&quot;,
+    y = &quot;Education&quot;
+  ) +
+  NULL
+
+monthly_income_gender_plot &lt;- ggplot(hr_cleaned,
+   aes(
+     x = gender, 
+     y = monthly_income 
+   )) + 
+  geom_col() +
+  theme_minimal() +
+  theme(text = element_text(size=30))+
+  labs(
+    title = &quot;Monthly income vs. gender&quot;,
+    x = &quot;Monthly income&quot;,
+    y = &quot;Gender&quot;
+  ) +
+  NULL
+
+monthly_income_education_plot</code></pre>
+<p><img src="/blogs/employees_files/figure-html/monthly_income_gender_education_plots-1.png" width="1920" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>monthly_income_gender_plot</code></pre>
+<p><img src="/blogs/employees_files/figure-html/monthly_income_gender_education_plots-2.png" width="1920" style="display: block; margin: auto;" /></p>
+<p>Answer:</p>
+<ul>
+<li>There is an inverted U-shaped relationship between education and monthly income. Bachelors’ income is higher than college’s and under college’s, since most of the high-payment jobs require at least bachelor’s degrees. And Bachelors’ income is also greater than masters’ and PhDs’ income, probably because given they all meet most companies’ basic education requirement, bachelors always have more working experience since they step into careers earlier.</li>
+<li>Male monthly incomes are higher than female. Gender inequality is still very common in job markets.</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li>Plot a boxplot of income vs job role. Make sure the highest-paid job roles appear first</li>
+</ol>
+<pre class="r"><code>income_jobrole_boxplot &lt;- ggplot(hr_cleaned, 
+       aes(
+         x= reorder(job_role, -monthly_income), 
+         y = monthly_income)) + 
+  geom_boxplot() +
+  labs(
+    title = &quot;Income per job role&quot;,
+    x = &quot;Job role&quot;,
+    y = &quot;Income&quot;
+  ) +
+  theme_minimal() +
+  theme(text = element_text(size=30))+
+  NULL
+
+income_jobrole_boxplot</code></pre>
+<p><img src="/blogs/employees_files/figure-html/income_jobrole_boxplot-1.png" width="3840" style="display: block; margin: auto;" /></p>
+<ol start="6" style="list-style-type: decimal">
+<li>Calculate and plot a bar chart of the mean (or median?) income by education level.</li>
+</ol>
+<pre class="r"><code>Education_mean_income_bar &lt;- ggplot(hr_cleaned, aes(
+    x = education, 
+    y = mean(monthly_income
+    ))) + 
+  geom_col() +
+  labs(
+    title = &quot;Mean monthly income per education&quot;,
+    x = &quot;Education&quot;,
+    y = &quot;Mean monthly income&quot;
+  ) +
+  theme_minimal() +
+  theme(text = element_text(size=10))+
+  NULL
+
+Education_median_income_bar &lt;- ggplot(hr_cleaned, aes(
+    x = education, 
+    y = median(monthly_income
+    ))) + 
+  geom_col() +
+  labs(
+    title = &quot;Median monthly income per education&quot;,
+    x = &quot;Education&quot;,
+    y = &quot;Median monthly income&quot;) +
+  theme_minimal() +
+  theme(text = element_text(size=10))+
+  NULL
+
+Education_mean_income_bar</code></pre>
+<p><img src="/blogs/employees_files/figure-html/barchart_income_education-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>Education_median_income_bar</code></pre>
+<p><img src="/blogs/employees_files/figure-html/barchart_income_education-2.png" width="648" style="display: block; margin: auto;" /></p>
+<ol start="7" style="list-style-type: decimal">
+<li>Plot the distribution of income by education level. Use a facet_wrap and a theme from <code>ggthemes</code></li>
+</ol>
+<pre class="r"><code>Monthly_income_education_distr &lt;- ggplot(hr_cleaned, aes(
+    x = monthly_income
+  )) + 
+  geom_histogram() + 
+  facet_wrap(~education,ncol=2) + 
+  labs(
+    title = &quot;Distribution of income by education&quot;,
+    x = &quot;Education&quot;
+  ) +
+  theme_economist_white() +
+  NULL
+
+Monthly_income_education_distr</code></pre>
+<p><img src="/blogs/employees_files/figure-html/distribution_by_education-1.png" width="960" style="display: block; margin: auto;" /></p>
+<ol style="list-style-type: decimal">
+<li>Plot income vs age, faceted by <code>job_role</code></li>
+</ol>
+<pre class="r"><code>Income_vs_age_facet &lt;- ggplot(hr_cleaned, aes(
+    x = age, 
+    y = monthly_income
+  )) + 
+  geom_col(width = 2) + 
+  facet_wrap(~job_role) +
+  labs(
+    title = &quot;Income vs. age by job role&quot;,
+    x = &quot;Age&quot;,
+    y = &quot;Monthly income&quot;
+  ) +
+  theme_minimal() +
+  NULL
+
+Income_vs_age_facet</code></pre>
+<p><img src="/blogs/employees_files/figure-html/Income_vs_age_by_jobrole-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+
+                        </div>
+                    </section>
+            <!-- Disqus Inject -->
+                
+            </div>
+            
+        <!-- Footer -->
+            
+                <!-- Footer -->
+    <footer id="footer">
+        <div class="inner">
+            <ul class="icons">
+                
+                    <li><a href="" class="icon alt " target="_blank"><span class="label"></span></a></li>
+                
+                    <li><a href="" class="icon alt " target="_blank"><span class="label"></span></a></li>
+                
+                    <li><a href="" class="icon alt " target="_blank"><span class="label"></span></a></li>
+                
+                    <li><a href="https://www.github.com/josephineaudrey" class="icon alt fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                
+                    <li><a href="https://www.linkedin.com/josephinehaag" class="icon alt fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                
+            </ul>
+            <ul class="copyright">
+                <li>&copy; JAH Consulting</li>
+                
+                <li> <a href=""></a></li>
+                
+            </ul>
+        </div>
+    </footer>
+
+            
+        </div>
+
+    <!-- Scripts -->
+        <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.scrolly.min.js"></script>
+    <script src="/js/jquery.scrollex.min.js"></script>
+    <script src="/js/skel.min.js"></script>
+    <script src="/js/util.js"></script>
+
+    
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+
+    
+
+    
+
+    </body>
+</html>
