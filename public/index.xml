@@ -6,7 +6,7 @@
     <description>Recent content on Portfolio website of Josephine Haag</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 18 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 19 Sep 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,22 +14,20 @@
     <item>
       <title>Alcohol consumption</title>
       <link>/blogs/alcohol/</link>
-      <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 19 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>/blogs/alcohol/</guid>
-      <description>Where Do People Drink The Most Beer, Wine And Spirits? While some people might argue that drinking alcohol can provide several health benefits, others believe that you should never drink at all. Regardless of this discussion, where do people drink the most alcohol? And how does this differ by alcohol type. The following visualizations provide answers on regional trends for alcohol preference:
-Total Alcohol # filter for top 25 alcohol consuming countries top25_alcohol &amp;lt;- drinks %&amp;gt;% top_n(25, total_litres_of_pure_alcohol) # rank top 25 by alcohol servings top25_alcohol_plot &amp;lt;- top25_alcohol %&amp;gt;% ggplot(aes( x = total_litres_of_pure_alcohol, y = reorder(country,total_litres_of_pure_alcohol), text = paste0(country, &amp;quot;, &amp;quot;, total_litres_of_pure_alcohol, &amp;quot;litres&amp;quot;) # order countries by beer servings )) + geom_col(stat = &amp;quot;identity&amp;quot;, width = 0.</description>
+      <description>Alcohol all around the world - where do people drink the most alcohol? While some people might argue that drinking alcohol can provide several health benefits, others believe that you should never drink at all. Regardless of this discussion, where do people drink the most alcohol? And how does this differ by alcohol type. The following visualizations provide answers on regional trends for alcohol preference:</description>
     </item>
     
     <item>
       <title>Employee Data</title>
       <link>/blogs/employees/</link>
-      <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 19 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>/blogs/employees/</guid>
-      <description>IBM HR Analytics During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers for it.
-Employee Retention How often do people leave the company (attrition)
-attrition_rate &amp;lt;- filter(hr_cleaned %&amp;gt;% group_by(attrition) %&amp;gt;% summarise(n = count(attrition)) %&amp;gt;% mutate(attrition_rate = (n*100)/sum(n)), attrition == &amp;quot;Yes&amp;quot;) #added column for the attrition rate % attrition_rate ## # A tibble: 1 x 3 ## attrition n attrition_rate ## &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; ## 1 Yes 237 16.</description>
+      <description>IBM HR Analytics During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers of productive employees. After cleaning the data, I will analyze several HR data and different relationships within.
+Employee Retention How often do people leave the company (attrition)? attrition_rate &amp;lt;- filter(hr_cleaned %&amp;gt;% group_by(attrition) %&amp;gt;% summarise(n = count(attrition)) %&amp;gt;% mutate(attrition_rate = (n*100)/sum(n)), attrition == &amp;quot;Yes&amp;quot;) #added column for the attrition rate % attrition_rate ## # A tibble: 1 x 3 ## attrition n attrition_rate ## &amp;lt;chr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; ## 1 Yes 237 16.</description>
     </item>
     
     <item>

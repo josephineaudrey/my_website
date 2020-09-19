@@ -85,10 +85,11 @@
 
 <div id="ibm-hr-analytics" class="section level1">
 <h1>IBM HR Analytics</h1>
-<p>During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers for it.</p>
+<p>During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers of productive employees. After cleaning the data, I will analyze several HR data and different relationships within.</p>
 <div id="employee-retention" class="section level2">
 <h2>Employee Retention</h2>
-<p>How often do people leave the company (<code>attrition</code>)</p>
+<div id="how-often-do-people-leave-the-company-attrition" class="section level3">
+<h3>How often do people leave the company (<code>attrition</code>)?</h3>
 <pre class="r"><code>attrition_rate &lt;- filter(hr_cleaned %&gt;% 
          group_by(attrition) %&gt;% 
          summarise(n = count(attrition)) %&gt;% 
@@ -270,6 +271,7 @@ Monthly_income_education_distr</code></pre>
 
 Income_vs_age_facet</code></pre>
 <p><img src="/blogs/employees_files/figure-html/Income_vs_age_by_jobrole-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
 </div>
 </div>
 

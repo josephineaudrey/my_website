@@ -50,7 +50,7 @@ library(ggplot2)
 
 # IBM HR Analytics
 
-During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers for it. 
+During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers of productive employees. After cleaning the data, I will analyze several HR data and different relationships within. 
 
 ```{r loading_HR_dataset, include=FALSE}
 hr_dataset <- read_csv( "datasets_1067_1925_WA_Fn-UseC_-HR-Employee-Attrition.csv")
@@ -108,7 +108,7 @@ hr_cleaned <- hr_dataset %>%
 
 ## Employee Retention
 
-How often do people leave the company (`attrition`)
+### How often do people leave the company (`attrition`)?
 ```{r company_attrition_rate}
 attrition_rate <- filter(hr_cleaned %>% 
          group_by(attrition) %>% 

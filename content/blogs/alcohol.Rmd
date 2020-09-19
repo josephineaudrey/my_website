@@ -53,9 +53,11 @@ ggthemr('dust')
 
 
 
-# Where Do People Drink The Most Beer, Wine And Spirits?
+# Alcohol all around the world - where do people drink the most alcohol? 
 
 While some people might argue that drinking alcohol can provide several health benefits, others believe that you should never drink at all. Regardless of this discussion, where do people drink the most alcohol? And how does this differ by alcohol type. The following visualizations provide answers on regional trends for alcohol preference:
+
+*Note: Scroll over the interactive graphs to see the exact amount of servings*
 
 ```{r load_alcohol_data, include=FALSE}
 library(fivethirtyeight)
@@ -75,6 +77,7 @@ skim(drinks)
 top25_alcohol <- drinks %>% 
   top_n(25, total_litres_of_pure_alcohol)  # rank top 25 by alcohol servings
 
+# plot top 25 alcohol consuming countries in descending order
 top25_alcohol_plot <- top25_alcohol %>%
   ggplot(aes(
     x = total_litres_of_pure_alcohol,
@@ -85,15 +88,22 @@ top25_alcohol_plot <- top25_alcohol %>%
   labs(
     x = "Litres of Alcohol", 
     y = "", 
-    title = "Top 25 Alcohol Consuming Countries", subtitle = "Belarus, Lithuania, & Andorra", caption = "Source: World Health Organization (GISAH), 2010") + # add labels to axis and title
+    title = "Top 25 Alcohol Consuming Countries") + # add labels
   NULL
 
 # convert into interactive graph
 top25_alcohol_plotly <- ggplotly(top25_alcohol_plot, tooltip = "text")
 
-top25_alcohol_plotly
+top25_alcohol_plotly %>%
+  layout(title = list(text = paste0('Top 25 Alcohol Consuming Countries',
+                                    '<br>',
+                                    '<sup>',
+                                    'Belarus, Lithuania, & Andorra consume the most alcohol',
+                                    '</sup>'))) # add title
 
 ```
+
+
 
 ## Beer
 ```{r beer_plot}
@@ -101,6 +111,7 @@ top25_alcohol_plotly
 top25_beer <- drinks %>% 
   top_n(25, beer_servings)  # rank top 25 by beer servings
 
+# plot top 25 beer consuming countries in descending order
 top25_beer_plot <- top25_beer %>%
   ggplot(aes(
     x = beer_servings,
@@ -121,6 +132,8 @@ top25_beer_plotly
 
 ```
 
+
+
 ## Wine
 ```{r wine_plot}
 # filter for top 25 wine consuming countries
@@ -128,6 +141,7 @@ top25_wine <- drinks %>%
   top_n(25, wine_servings) %>%
   arrange(desc(wine_servings)) # rank top 25 by wine servings
 
+# plot top 25 wine consuming countries in descending order
 top25_wine_plot <- top25_wine %>%
   ggplot(aes(
     x = wine_servings,
@@ -149,12 +163,15 @@ top25_wine_plotly
 
 ```
 
+
+
 ## Spirit
 ```{r spirit_plot}
 # filter for top 25 spirit consuming countries
 top25_spirit <- drinks %>% 
   top_n(25, spirit_servings)  # rank top 25 by spirit servings
 
+# plot top 25 spirit consuming countries in descending order
 top25_spirit_plot <- top25_spirit %>%
   ggplot(aes(
     x = spirit_servings,
@@ -168,8 +185,6 @@ top25_spirit_plot <- top25_spirit %>%
     title = "Top 25 Spirit Consuming Countries", subtitle = "Granada, Belarus, and Russia drink most spirit", caption = "Source: World Health Organization (GISAH), 2010") + # add labels to axis and title
   NULL
 
-top25_spirit_plot
-
 # convert into interactive graph
 top25_spirit_plotly <- ggplotly(top25_spirit_plot, tooltip = "text")
 
@@ -178,12 +193,11 @@ top25_spirit_plotly
 
 
 
-> IMPLICATIONS
+##  Implications
 
 - In the wine consumption rankings, 9 of the top 10 are European countries. Most areas of Europe (especially the low latitudes) are very suitable for growing grapes due to sufficient sunlight and fertile soil. The typical ones are Southern France, Portugal, Andorra, Italy, and Greece. This may develop the people's habit of drinking wine. Compared to wine, the high beer consuming countries are mainly in higher latitudes (north of the Alps), since wheat is widely planted and is an important raw material for beer in these countries. In addition, the beer ranking includes the most continents among other liquors, which may implicate that beer is the most widely accepted and accessible alcohol in the world.
 - In the spirits consumption ranking, six of the top 25 are island countries in the Caribbean and the Pacific, and 11 of the top 25 are East European countries. This conforms to the origins of two very famous spirit types - rum and vodka.
 
-## Summary
 ```{r, include=FALSE}
 
 # library(choroplethr)
