@@ -47,15 +47,15 @@ disqusShortname = ""
       name = "Home"
       url = "#"
 
-    [[params.navigation.links]]
-      name = "Data Analysis"
-      url = "blogs"
+    #[[params.navigation.links]]
+      # name = "Data Analysis"
+      # url = "blogs"
 
-    [[params.navigation.links]]
+   # [[params.navigation.links]]
      # name = "Corona"
      # url = "blogs/ipsum"
 
-    [[params.navigation.links]]
+   # [[params.navigation.links]]
     # name = "Feedback"
     # url = "elements.html"
 
@@ -67,12 +67,12 @@ disqusShortname = ""
     #    url = "UrlOfLink"
 
     # Button Style 1
-    [[params.navigation.button1]]
-      name = "See more"
-      url = "blogs"
+   # [[params.navigation.button1]]
+   #   name = "See more"
+    #  url = "blogs"
 
     # Button Style 2
-    [[params.navigation.button2]]
+   # [[params.navigation.button2]]
      # name = "Log In"
      # url = "#"
 
@@ -128,7 +128,7 @@ disqusShortname = ""
      # url = "blogs/socialmedia"
     # You can make more showcases by copy and pasting the code above
 
-  [params.blog]
+  # [params.blog]
     # All blogs defined in their own files. You can find example blogs
     # at 'exampleSite/content/blogs'. Copy the 'blogs' folder into the 'content' directory
     # at the root of this Hugo site.
@@ -136,7 +136,7 @@ disqusShortname = ""
     # To add more blogs just copy and paste the code.
 
   # Section Type Two
-  [params.two]
+ # [params.two]
    # enable = true
    # title = "Data Analysis"
    # subtitle = """I like to explore and analyze interesting data sets in R."""
