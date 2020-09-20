@@ -111,7 +111,7 @@ disqusShortname = ""
 
     [[params.tiles.showcase]]
      title = "GDP across times and countries "
-     subtitle = "What contributes to GDP?"
+     subtitle = "What contributes to GDP in different countries?"
      image = "gdp.jpg"
      url = "blogs/gdp"
 
