@@ -7,7 +7,7 @@ output:
     code_folding: show
     highlight: default
     number_sections: yes
-    theme: forty
+    theme: flatly
     toc: yes
     toc_float: yes
   pdf_document:
@@ -45,6 +45,8 @@ library(vroom)
 library(tidyquant)
 library(patchwork)
 library(ggplot2)
+library(plotly)
+library(ggthemr)
 ggthemr('dust')
 
 ```
@@ -143,8 +145,8 @@ job_satisfaction_gender_plot <- job_satisfaction_gender %>%
   ylim(0, 5) +
   labs(
     title = "Job Satisfaction by Gender", 
+    subtitle = "Men are slightly more satisfied with their jobs than women",
     y = "Average Job Satisfaction") +
-  theme_bw() +
   NULL
 
 job_satisfaction_gender_plot
@@ -153,9 +155,8 @@ Job satisfaction seems to be slightly higher for men than for women.
 
 I will continue by investigating how are job satisfaction and work-life-balance are distributed
 
-```{r job_sat_and_worklife_balance}
-
-
+```{r job_sat}
+# find distribution of job satisfaction
 job_sat <- hr_cleaned %>% 
   group_by(job_satisfaction) %>% 
   summarise(n = count(job_satisfaction)) %>% 
@@ -163,18 +164,36 @@ job_sat <- hr_cleaned %>%
 
 job_sat
 
+# reorder levels of job satisfaction 
+job_sat$job_satisfaction <- factor(job_sat$job_satisfaction, c("Low", "Medium", "High", "Very High"))
+
+# plot distribution
 job_sat_plot <- job_sat %>%
-  ggplot(aes(x = n, y = job_satisfaction)) +
-  geom_col() +
+  ggplot(aes(
+    x = job_sat_perc, 
+    y = job_satisfaction, 
+    text = paste0("count: ", n))) + # label for ggplotly
+  geom_col(fill = "#fecc5c") +
   labs(
     title = "Distribution of Job Satisfaction", 
-    y = "Level of Job Satisfaction") +
-  theme_bw() +
-  theme_bw()
+    y = "Level of Job Satisfaction",
+    x = "Percentage of total") +
   NULL
-  
-job_sat_plot
 
+# convert into interactive graph
+job_sat_plotly <- ggplotly(job_sat_plot, tooltip = "text")
+
+# add title for ggplotly
+job_sat_plotly %>%
+  layout(title = list(text = paste0('Distribution of Job Satisfaction',
+                                    '<br>',
+                                    '<sup>',
+                                    'Most employees have a high or very high job satisfaction',
+                                    '</sup>'))) # add title
+```
+
+```{r worklife_balance}
+# find distribution of worklife balance
 work_life_balance <- hr_cleaned %>% 
   group_by(work_life_balance) %>% 
   summarise(n = count(work_life_balance)) %>% 
@@ -183,26 +202,50 @@ work_life_balance <- hr_cleaned %>%
 
 work_life_balance
 
+# reorder levels of work life balance 
+work_life_balance$work_life_balance <- factor(work_life_balance$work_life_balance, c("Bad", "Good", "Better", "Best"))
+
+# plot distribution
+work_life_balance_plot <- work_life_balance %>%
+  ggplot(aes(
+    x = work_life_perc, 
+    y = work_life_balance, 
+    text = paste0("count: ", n))) + # label for ggplotly
+  geom_col(fill = "#fd8d3c") +
+  labs(
+    title = "Distribution of Work Life Balance", 
+    y = "Level of Work Life Balance",
+    x = "Percentage of total") +
+  NULL
+
+# convert into interactive graph
+work_life_balance_plotly <- ggplotly(work_life_balance_plot, tooltip = "text")
+
+# add title for ggplotly
+work_life_balance_plotly %>%
+  layout(title = list(text = paste0('Distribution of Work Life Balance',
+                                    '<br>',
+                                    '<sup>',
+                                    'Most employees have a "better" work life balance',
+                                    '</sup>'))) # add title
+
 ```
 
-Answer:
-
-`job_satisfaction` is right skewed, with around 60% of the values on the right.
-`work_life_balance` seems to better resemble a normal distribution, a bit skewed to the right.
+Job satisfaction is right skewed, with around 60% of the values on the right.
+Work life balance seems to better resemble a normal distribution, a bit skewed to the right.
 
 
-4. Is there any relationship between monthly income and education? Monthly income and gender?
+I will continue with investigating whether there is any relationship between monthly income and education as well as between monthly income and gender.
 ```{r monthly_income_gender_education_plots, fig.width=20}
-library(hrbrthemes)
 options("scipen"=100, "digits"=4)
 
 monthly_income_education_plot <- ggplot(hr_cleaned,
    aes(
      x = education, 
-     y = monthly_income 
+     y = monthly_income,
+     color = gender
    )) + 
   geom_col() +
-  theme_minimal() +
   theme(text = element_text(size=40))+
   labs(
     title = "Monthly income vs. education",
@@ -214,10 +257,10 @@ monthly_income_education_plot <- ggplot(hr_cleaned,
 monthly_income_gender_plot <- ggplot(hr_cleaned,
    aes(
      x = gender, 
-     y = monthly_income 
+     y = monthly_income,
+     color = gender
    )) + 
   geom_col() +
-  theme_minimal() +
   theme(text = element_text(size=30))+
   labs(
     title = "Monthly income vs. gender",

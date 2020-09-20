@@ -81,8 +81,8 @@ top25_alcohol <- drinks %>%
 top25_alcohol_plot <- top25_alcohol %>%
   ggplot(aes(
     x = total_litres_of_pure_alcohol,
-    y = reorder(country,total_litres_of_pure_alcohol),
-    text = paste0(country, ", ", total_litres_of_pure_alcohol, "litres") # order countries by beer servings
+    y = reorder(country,total_litres_of_pure_alcohol), # order countries by beer servings
+    text = paste0(country, ", ", total_litres_of_pure_alcohol, "litres") # text for ggplotly
   )) +
   geom_col(stat = "identity", width = 0.8, fill = "#c6dbef") + # adapt bars and set a color to beer
   labs(
@@ -94,6 +94,7 @@ top25_alcohol_plot <- top25_alcohol %>%
 # convert into interactive graph
 top25_alcohol_plotly <- ggplotly(top25_alcohol_plot, tooltip = "text")
 
+# add title for ggplotly
 top25_alcohol_plotly %>%
   layout(title = list(text = paste0('Top 25 Alcohol Consuming Countries',
                                     '<br>',
@@ -117,8 +118,8 @@ top25_beer <- drinks %>%
 top25_beer_plot <- top25_beer %>%
   ggplot(aes(
     x = beer_servings,
-    y = reorder(country,beer_servings),
-    text = paste0(country, ", ", beer_servings, " servings") # order countries by beer servings
+    y = reorder(country,beer_servings), # order countries by beer servings
+    text = paste0(country, ", ", beer_servings, " servings") # text for ggplotly
   )) +
   geom_col(stat = "identity", width = 0.8, fill = "#feb24c") + # adapt bars and set a color to beer
   labs(

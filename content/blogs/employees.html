@@ -7,13 +7,21 @@ output:
     code_folding: show
     highlight: default
     number_sections: yes
-    theme: forty
+    theme: flatly
     toc: yes
     toc_float: yes
   pdf_document:
     toc: yes
 ---
 
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
 
 
 <div id="ibm-hr-analytics" class="section level1">
@@ -22,7 +30,7 @@ output:
 <div id="employee-retention" class="section level2">
 <h2>Employee Retention</h2>
 <div id="how-often-do-people-leave-the-company-attrition" class="section level3">
-<h3>How often do people leave the company (<code>attrition</code>)?</h3>
+<h3>How often do people leave the company (attrition)?</h3>
 <pre class="r"><code>attrition_rate &lt;- filter(hr_cleaned %&gt;% 
          group_by(attrition) %&gt;% 
          summarise(n = count(attrition)) %&gt;% 
@@ -57,15 +65,16 @@ job_satisfaction_gender_plot &lt;- job_satisfaction_gender %&gt;%
   ylim(0, 5) +
   labs(
     title = &quot;Job Satisfaction by Gender&quot;, 
+    subtitle = &quot;Men are slightly more satisfied with their jobs than women&quot;,
     y = &quot;Average Job Satisfaction&quot;) +
-  theme_bw() +
   NULL
 
 job_satisfaction_gender_plot</code></pre>
 <p><img src="/blogs/employees_files/figure-html/job_satisfaction-1.png" width="648" style="display: block; margin: auto;" />
 Job satisfaction seems to be slightly higher for men than for women.</p>
 <p>I will continue by investigating how are job satisfaction and work-life-balance are distributed</p>
-<pre class="r"><code>job_sat &lt;- hr_cleaned %&gt;% 
+<pre class="r"><code># find distribution of job satisfaction
+job_sat &lt;- hr_cleaned %&gt;% 
   group_by(job_satisfaction) %&gt;% 
   summarise(n = count(job_satisfaction)) %&gt;% 
   mutate(job_sat_perc = (n*100)/sum(n))
@@ -78,19 +87,36 @@ job_sat</code></pre>
 ## 2 Low                289         19.7
 ## 3 Medium             280         19.0
 ## 4 Very High          459         31.2</code></pre>
-<pre class="r"><code>job_sat_plot &lt;- job_sat %&gt;%
-  ggplot(aes(x = n, y = job_satisfaction)) +
-  geom_col() +
+<pre class="r"><code># reorder levels of job satisfaction 
+job_sat$job_satisfaction &lt;- factor(job_sat$job_satisfaction, c(&quot;Low&quot;, &quot;Medium&quot;, &quot;High&quot;, &quot;Very High&quot;))
+
+# plot distribution
+job_sat_plot &lt;- job_sat %&gt;%
+  ggplot(aes(
+    x = job_sat_perc, 
+    y = job_satisfaction, 
+    text = paste0(&quot;count: &quot;, n))) + # label for ggplotly
+  geom_col(fill = &quot;#fecc5c&quot;) +
   labs(
     title = &quot;Distribution of Job Satisfaction&quot;, 
-    y = &quot;Level of Job Satisfaction&quot;) +
-  theme_bw() +
-  theme_bw()
-  NULL</code></pre>
-<pre><code>## NULL</code></pre>
-<pre class="r"><code>job_sat_plot</code></pre>
-<p><img src="/blogs/employees_files/figure-html/job_sat_and_worklife_balance-1.png" width="648" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>work_life_balance &lt;- hr_cleaned %&gt;% 
+    y = &quot;Level of Job Satisfaction&quot;,
+    x = &quot;Percentage of total&quot;) +
+  NULL
+
+# convert into interactive graph
+job_sat_plotly &lt;- ggplotly(job_sat_plot, tooltip = &quot;text&quot;)
+
+# add title for ggplotly
+job_sat_plotly %&gt;%
+  layout(title = list(text = paste0(&#39;Distribution of Job Satisfaction&#39;,
+                                    &#39;&lt;br&gt;&#39;,
+                                    &#39;&lt;sup&gt;&#39;,
+                                    &#39;Most employees have a high or very high job satisfaction&#39;,
+                                    &#39;&lt;/sup&gt;&#39;))) # add title</code></pre>
+<div id="htmlwidget-1" style="width:648px;height:648px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"data":[{"orientation":"v","width":[30.0680272108844,19.6598639455782,19.047619047619,31.2244897959184],"base":[2.55,0.55,1.55,3.55],"x":[15.0340136054422,9.82993197278912,9.52380952380952,15.6122448979592],"y":[0.9,0.9,0.9,0.9],"text":["count: 442","count: 289","count: 280","count: 459"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(254,204,92,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.0983810709838,"r":7.97011207970112,"b":40.6475716064757,"l":85.280199252802},"plot_bgcolor":"rgba(250,247,242,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022},"title":{"text":"Distribution of Job Satisfaction<br><sup>Most employees have a high or very high job satisfaction<\/sup>","font":{"color":"rgba(91,79,65,1)","family":"","size":19.1282689912827},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1.56122448979592,32.7857142857143],"tickmode":"array","ticktext":["0","10","20","30"],"tickvals":[0,10,20,30],"categoryorder":"array","categoryarray":["0","10","20","30"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Percentage of total","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["Low","Medium","High","Very High"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Low","Medium","High","Very High"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Level of Job Satisfaction","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"rgba(255,255,255,1)","borderwidth":1.88976377952756,"font":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"7fad4bc10674":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"7fad4bc10674","visdat":{"7fad4bc10674":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># find distribution of worklife balance
+work_life_balance &lt;- hr_cleaned %&gt;% 
   group_by(work_life_balance) %&gt;% 
   summarise(n = count(work_life_balance)) %&gt;% 
   mutate(work_life_perc = (n*100)/sum(n)) %&gt;% 
@@ -104,22 +130,46 @@ work_life_balance</code></pre>
 ## 2 Good                344          23.4 
 ## 3 Best                153          10.4 
 ## 4 Bad                  80           5.44</code></pre>
-<p>Answer:</p>
-<p><code>job_satisfaction</code> is right skewed, with around 60% of the values on the right.
-<code>work_life_balance</code> seems to better resemble a normal distribution, a bit skewed to the right.</p>
-<ol start="4" style="list-style-type: decimal">
-<li>Is there any relationship between monthly income and education? Monthly income and gender?</li>
-</ol>
-<pre class="r"><code>library(hrbrthemes)
-options(&quot;scipen&quot;=100, &quot;digits&quot;=4)
+<pre class="r"><code># reorder levels of work life balance 
+work_life_balance$work_life_balance &lt;- factor(work_life_balance$work_life_balance, c(&quot;Bad&quot;, &quot;Good&quot;, &quot;Better&quot;, &quot;Best&quot;))
+
+# plot distribution
+work_life_balance_plot &lt;- work_life_balance %&gt;%
+  ggplot(aes(
+    x = work_life_perc, 
+    y = work_life_balance, 
+    text = paste0(&quot;count: &quot;, n))) + # label for ggplotly
+  geom_col(fill = &quot;#fd8d3c&quot;) +
+  labs(
+    title = &quot;Distribution of Work Life Balance&quot;, 
+    y = &quot;Level of Work Life Balance&quot;,
+    x = &quot;Percentage of total&quot;) +
+  NULL
+
+# convert into interactive graph
+work_life_balance_plotly &lt;- ggplotly(work_life_balance_plot, tooltip = &quot;text&quot;)
+
+# add title for ggplotly
+work_life_balance_plotly %&gt;%
+  layout(title = list(text = paste0(&#39;Distribution of Work Life Balance&#39;,
+                                    &#39;&lt;br&gt;&#39;,
+                                    &#39;&lt;sup&gt;&#39;,
+                                    &#39;Most employees have a &quot;better&quot; work life balance&#39;,
+                                    &#39;&lt;/sup&gt;&#39;))) # add title</code></pre>
+<div id="htmlwidget-2" style="width:648px;height:648px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"data":[{"orientation":"v","width":[60.7482993197279,23.4013605442177,10.4081632653061,5.4421768707483],"base":[2.55,1.55,3.55,0.55],"x":[30.3741496598639,11.7006802721088,5.20408163265306,2.72108843537415],"y":[0.9,0.9,0.9,0.9],"text":["count: 893","count: 344","count: 153","count: 80"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(253,141,60,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.0983810709838,"r":7.97011207970112,"b":40.6475716064757,"l":66.1519302615193},"plot_bgcolor":"rgba(250,247,242,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022},"title":{"text":"Distribution of Work Life Balance<br><sup>Most employees have a \"better\" work life balance<\/sup>","font":{"color":"rgba(91,79,65,1)","family":"","size":19.1282689912827},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-3.03741496598639,63.7857142857143],"tickmode":"array","ticktext":["0","20","40","60"],"tickvals":[0,20,40,60],"categoryorder":"array","categoryarray":["0","20","40","60"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Percentage of total","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["Bad","Good","Better","Best"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Bad","Good","Better","Best"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Level of Work Life Balance","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"rgba(255,255,255,1)","borderwidth":1.88976377952756,"font":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"7fad74bb1c1a":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"7fad74bb1c1a","visdat":{"7fad74bb1c1a":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>Job satisfaction is right skewed, with around 60% of the values on the right.
+Work life balance seems to better resemble a normal distribution, a bit skewed to the right.</p>
+<p>I will continue with investigating whether there is any relationship between monthly income and education as well as between monthly income and gender.</p>
+<pre class="r"><code>options(&quot;scipen&quot;=100, &quot;digits&quot;=4)
 
 monthly_income_education_plot &lt;- ggplot(hr_cleaned,
    aes(
      x = education, 
-     y = monthly_income 
+     y = monthly_income,
+     color = gender
    )) + 
   geom_col() +
-  theme_minimal() +
   theme(text = element_text(size=40))+
   labs(
     title = &quot;Monthly income vs. education&quot;,
@@ -131,10 +181,10 @@ monthly_income_education_plot &lt;- ggplot(hr_cleaned,
 monthly_income_gender_plot &lt;- ggplot(hr_cleaned,
    aes(
      x = gender, 
-     y = monthly_income 
+     y = monthly_income,
+     color = gender
    )) + 
   geom_col() +
-  theme_minimal() +
   theme(text = element_text(size=30))+
   labs(
     title = &quot;Monthly income vs. gender&quot;,
