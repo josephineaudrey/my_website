@@ -55,6 +55,9 @@ ggthemr('dust')
 
 During my internship at an HR Tech start-up Leapsome (leapsome.com) I learned a lot about the importance of employee retention and employee satisfaction.  Employee engagement and meaningful feedback, for example, are two drivers of productive employees. This data set on past and current employees at a company can give insights about what can contribute to workforce attrition. After cleaning the data set with data about around 1500 employees, I will analyze several HR data and different relationships within. 
 
+*Note: Scroll over the interactive graphs to see the exact amount of servings*
+
+
 ```{r loading_HR_dataset, include=FALSE}
 hr_dataset <- read_csv( "datasets_1067_1925_WA_Fn-UseC_-HR-Employee-Attrition.csv")
 glimpse(hr_dataset)
@@ -146,10 +149,11 @@ job_satisfaction_gender_plot <- job_satisfaction_gender %>%
   labs(
     title = "Job Satisfaction by Gender", 
     subtitle = "Men are slightly more satisfied with their jobs than women",
-    y = "Average Job Satisfaction") +
+    y = "Average Job Satisfaction") + # add titles
+  theme(legend.position = "none") # remove legend
   NULL
 
-job_satisfaction_gender_plot
+job_satisfaction_gender_plot 
 ```
 Job satisfaction seems to be slightly higher for men than for women. 
 
@@ -211,11 +215,11 @@ work_life_balance_plot <- work_life_balance %>%
     x = work_life_perc, 
     y = work_life_balance, 
     text = paste0("count: ", n))) + # label for ggplotly
-  geom_col(fill = "#fd8d3c") +
+  geom_col(fill = "#feb24c") +
   labs(
     title = "Distribution of Work Life Balance", 
     y = "Level of Work Life Balance",
-    x = "Percentage of total") +
+    x = "Percentage of total") + # add titles
   NULL
 
 # convert into interactive graph
@@ -227,7 +231,7 @@ work_life_balance_plotly %>%
                                     '<br>',
                                     '<sup>',
                                     'Most employees have a "better" work life balance',
-                                    '</sup>'))) # add title
+                                    '</sup>'))) 
 
 ```
 
@@ -236,48 +240,84 @@ Work life balance seems to better resemble a normal distribution, a bit skewed t
 
 
 I will continue with investigating whether there is any relationship between monthly income and education as well as between monthly income and gender.
-```{r monthly_income_gender_education_plots, fig.width=20}
-options("scipen"=100, "digits"=4)
+```{r monthly_income_education_plots, fig.width=20}
+options(scipen=100, digits=2)
 
-monthly_income_education_plot <- ggplot(hr_cleaned,
-   aes(
+# reorder levels of education 
+hr_cleaned$education <- factor(hr_cleaned$education, c("Below College", "College", "Bachelor", "Master", "Doctor"))
+
+# calculate mean and median income per education level
+monthly_income_ed <- hr_cleaned %>%
+  group_by(education) %>%
+  summarize(median_income = round(median(monthly_income)), mean_income = round(mean(monthly_income))) # round to nearest digit
+  
+monthly_income_ed
+
+# plot median income per education level and include mean interactively
+monthly_income_education_plot <- monthly_income_ed %>%
+  ggplot(aes(
      x = education, 
-     y = monthly_income,
-     color = gender
-   )) + 
-  geom_col() +
-  theme(text = element_text(size=40))+
+     y = median_income,
+     text = paste0("Median: $", median_income," mean: $", mean_income) # label for ggplotly (including mean income)
+     )) + 
+  geom_col(fill = "#fd8d3c") +
   labs(
     title = "Monthly income vs. education",
-    x = "Monthly income",
-    y = "Education"
+    x = "Education level",
+    y = "Monthly income"
   ) +
   NULL
 
-monthly_income_gender_plot <- ggplot(hr_cleaned,
-   aes(
-     x = gender, 
-     y = monthly_income,
-     color = gender
-   )) + 
-  geom_col() +
-  theme(text = element_text(size=30))+
-  labs(
-    title = "Monthly income vs. gender",
-    x = "Monthly income",
-    y = "Gender"
-  ) +
-  NULL
+# convert into interactive graph
+monthly_income_education_plotly <- ggplotly(monthly_income_education_plot, tooltip = "text")
 
-monthly_income_education_plot
-monthly_income_gender_plot
-
+# add title for ggplotly
+monthly_income_education_plotly %>%
+  layout(title = list(text = paste0('Income across eduation levels',
+                                    '<br>',
+                                    '<sup>',
+                                    'Income increases with additional education level',
+                                    '</sup>'))) 
 ```
 
-Answer:
+```{r monthly_income_gender_plots, fig.width=20}
+# calculate mean and median income per gender
+monthly_income_sex <- hr_cleaned %>%
+  group_by(gender) %>%
+  summarize(median_income = round(median(monthly_income)), mean_income = round(mean(monthly_income))) # round to nearest digit
+  
+monthly_income_sex
 
-- There is an inverted U-shaped relationship between education and monthly income. Bachelors' income is higher than college's and under college's, since most of the high-payment jobs require at least bachelor's degrees. And Bachelors' income is also greater than masters' and PhDs' income, probably because given they all meet most companies' basic education requirement, bachelors always have more working experience since they step into careers earlier.
-- Male monthly incomes are higher than female. Gender inequality is still very common in job markets.
+# plot median income per gender and include mean interactively
+monthly_income_gender_plot <- monthly_income_sex %>%
+  ggplot(aes(
+     x = gender, 
+     y = median_income,
+     text = paste0("Median: $", median_income," mean: $", mean_income) # label for ggplotly (including mean income)
+     )) + 
+  geom_col(fill = "#fc4e2a") +
+  labs(
+    title = "Monthly income per gender",
+    x = "",
+    y = "Monthly income"
+  ) +
+  NULL
+
+# convert into interactive graph
+monthly_income_gender_plotly <- ggplotly(monthly_income_gender_plot, tooltip = "text")
+
+# add title for ggplotly
+monthly_income_gender_plotly %>%
+  layout(title = list(text = paste0('Income per gender',
+                                    '<br>',
+                                    '<sup>',
+                                    'Median and mean income are higher for women',
+                                    '</sup>'))) 
+
+```
+The monthly income increases with additional levels of education, which is intuitive. Interestingly, the median income is higher for employees with a College degree than for those with a Bachelor degree. The mean, however, is higher for the Bachelor degree. This might imply that a Bachelor is not worth much more than a College degree when it comes to monthly income.
+
+When comparing income between gender, the female mean and median income is higher than the male ones. This can, however, be influenced by various factors, such as the job position and education levle.
 
 
 5. Plot a boxplot of income vs job role. Make sure the highest-paid job roles appear first

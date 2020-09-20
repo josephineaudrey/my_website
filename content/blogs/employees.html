@@ -27,6 +27,7 @@ output:
 <div id="ibm-hr-analytics" class="section level1">
 <h1>IBM HR Analytics</h1>
 <p>During my internship at an HR Tech start-up Leapsome (leapsome.com) I learned a lot about the importance of employee retention and employee satisfaction. Employee engagement and meaningful feedback, for example, are two drivers of productive employees. This data set on past and current employees at a company can give insights about what can contribute to workforce attrition. After cleaning the data set with data about around 1500 employees, I will analyze several HR data and different relationships within.</p>
+<p><em>Note: Scroll over the interactive graphs to see the exact amount of servings</em></p>
 <div id="employee-retention" class="section level2">
 <h2>Employee Retention</h2>
 <div id="how-often-do-people-leave-the-company-attrition" class="section level3">
@@ -66,10 +67,11 @@ job_satisfaction_gender_plot &lt;- job_satisfaction_gender %&gt;%
   labs(
     title = &quot;Job Satisfaction by Gender&quot;, 
     subtitle = &quot;Men are slightly more satisfied with their jobs than women&quot;,
-    y = &quot;Average Job Satisfaction&quot;) +
-  NULL
-
-job_satisfaction_gender_plot</code></pre>
+    y = &quot;Average Job Satisfaction&quot;) + # add titles
+  theme(legend.position = &quot;none&quot;) # remove legend
+  NULL</code></pre>
+<pre><code>## NULL</code></pre>
+<pre class="r"><code>job_satisfaction_gender_plot </code></pre>
 <p><img src="/blogs/employees_files/figure-html/job_satisfaction-1.png" width="648" style="display: block; margin: auto;" />
 Job satisfaction seems to be slightly higher for men than for women.</p>
 <p>I will continue by investigating how are job satisfaction and work-life-balance are distributed</p>
@@ -114,7 +116,7 @@ job_sat_plotly %&gt;%
                                     &#39;Most employees have a high or very high job satisfaction&#39;,
                                     &#39;&lt;/sup&gt;&#39;))) # add title</code></pre>
 <div id="htmlwidget-1" style="width:648px;height:648px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1">{"x":{"data":[{"orientation":"v","width":[30.0680272108844,19.6598639455782,19.047619047619,31.2244897959184],"base":[2.55,0.55,1.55,3.55],"x":[15.0340136054422,9.82993197278912,9.52380952380952,15.6122448979592],"y":[0.9,0.9,0.9,0.9],"text":["count: 442","count: 289","count: 280","count: 459"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(254,204,92,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.0983810709838,"r":7.97011207970112,"b":40.6475716064757,"l":85.280199252802},"plot_bgcolor":"rgba(250,247,242,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022},"title":{"text":"Distribution of Job Satisfaction<br><sup>Most employees have a high or very high job satisfaction<\/sup>","font":{"color":"rgba(91,79,65,1)","family":"","size":19.1282689912827},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1.56122448979592,32.7857142857143],"tickmode":"array","ticktext":["0","10","20","30"],"tickvals":[0,10,20,30],"categoryorder":"array","categoryarray":["0","10","20","30"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Percentage of total","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["Low","Medium","High","Very High"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Low","Medium","High","Very High"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Level of Job Satisfaction","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"rgba(255,255,255,1)","borderwidth":1.88976377952756,"font":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"7fad4bc10674":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"7fad4bc10674","visdat":{"7fad4bc10674":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"data":[{"orientation":"v","width":[30.0680272108844,19.6598639455782,19.047619047619,31.2244897959184],"base":[2.55,0.55,1.55,3.55],"x":[15.0340136054422,9.82993197278912,9.52380952380952,15.6122448979592],"y":[0.9,0.9,0.9,0.9],"text":["count: 442","count: 289","count: 280","count: 459"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(254,204,92,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.0983810709838,"r":7.97011207970112,"b":40.6475716064757,"l":85.280199252802},"plot_bgcolor":"rgba(250,247,242,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022},"title":{"text":"Distribution of Job Satisfaction<br><sup>Most employees have a high or very high job satisfaction<\/sup>","font":{"color":"rgba(91,79,65,1)","family":"","size":19.1282689912827},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-1.56122448979592,32.7857142857143],"tickmode":"array","ticktext":["0","10","20","30"],"tickvals":[0,10,20,30],"categoryorder":"array","categoryarray":["0","10","20","30"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Percentage of total","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["Low","Medium","High","Very High"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Low","Medium","High","Very High"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Level of Job Satisfaction","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"rgba(255,255,255,1)","borderwidth":1.88976377952756,"font":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"83bc5215aea2":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"83bc5215aea2","visdat":{"83bc5215aea2":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <pre class="r"><code># find distribution of worklife balance
 work_life_balance &lt;- hr_cleaned %&gt;% 
   group_by(work_life_balance) %&gt;% 
@@ -139,11 +141,11 @@ work_life_balance_plot &lt;- work_life_balance %&gt;%
     x = work_life_perc, 
     y = work_life_balance, 
     text = paste0(&quot;count: &quot;, n))) + # label for ggplotly
-  geom_col(fill = &quot;#fd8d3c&quot;) +
+  geom_col(fill = &quot;#feb24c&quot;) +
   labs(
     title = &quot;Distribution of Work Life Balance&quot;, 
     y = &quot;Level of Work Life Balance&quot;,
-    x = &quot;Percentage of total&quot;) +
+    x = &quot;Percentage of total&quot;) + # add titles
   NULL
 
 # convert into interactive graph
@@ -155,53 +157,98 @@ work_life_balance_plotly %&gt;%
                                     &#39;&lt;br&gt;&#39;,
                                     &#39;&lt;sup&gt;&#39;,
                                     &#39;Most employees have a &quot;better&quot; work life balance&#39;,
-                                    &#39;&lt;/sup&gt;&#39;))) # add title</code></pre>
+                                    &#39;&lt;/sup&gt;&#39;))) </code></pre>
 <div id="htmlwidget-2" style="width:648px;height:648px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-2">{"x":{"data":[{"orientation":"v","width":[60.7482993197279,23.4013605442177,10.4081632653061,5.4421768707483],"base":[2.55,1.55,3.55,0.55],"x":[30.3741496598639,11.7006802721088,5.20408163265306,2.72108843537415],"y":[0.9,0.9,0.9,0.9],"text":["count: 893","count: 344","count: 153","count: 80"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(253,141,60,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.0983810709838,"r":7.97011207970112,"b":40.6475716064757,"l":66.1519302615193},"plot_bgcolor":"rgba(250,247,242,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022},"title":{"text":"Distribution of Work Life Balance<br><sup>Most employees have a \"better\" work life balance<\/sup>","font":{"color":"rgba(91,79,65,1)","family":"","size":19.1282689912827},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-3.03741496598639,63.7857142857143],"tickmode":"array","ticktext":["0","20","40","60"],"tickvals":[0,20,40,60],"categoryorder":"array","categoryarray":["0","20","40","60"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Percentage of total","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["Bad","Good","Better","Best"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Bad","Good","Better","Best"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Level of Work Life Balance","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"rgba(255,255,255,1)","borderwidth":1.88976377952756,"font":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"7fad74bb1c1a":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"7fad74bb1c1a","visdat":{"7fad74bb1c1a":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"data":[{"orientation":"v","width":[60.7482993197279,23.4013605442177,10.4081632653061,5.4421768707483],"base":[2.55,1.55,3.55,0.55],"x":[30.3741496598639,11.7006802721088,5.20408163265306,2.72108843537415],"y":[0.9,0.9,0.9,0.9],"text":["count: 893","count: 344","count: 153","count: 80"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(254,178,76,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.0983810709838,"r":7.97011207970112,"b":40.6475716064757,"l":66.1519302615193},"plot_bgcolor":"rgba(250,247,242,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022},"title":{"text":"Distribution of Work Life Balance<br><sup>Most employees have a \"better\" work life balance<\/sup>","font":{"color":"rgba(91,79,65,1)","family":"","size":19.1282689912827},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-3.03741496598639,63.7857142857143],"tickmode":"array","ticktext":["0","20","40","60"],"tickvals":[0,20,40,60],"categoryorder":"array","categoryarray":["0","20","40","60"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Percentage of total","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["Bad","Good","Better","Best"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Bad","Good","Better","Best"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Level of Work Life Balance","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"rgba(255,255,255,1)","borderwidth":1.88976377952756,"font":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"83bc4dee2c2b":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"83bc4dee2c2b","visdat":{"83bc4dee2c2b":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p>Job satisfaction is right skewed, with around 60% of the values on the right.
 Work life balance seems to better resemble a normal distribution, a bit skewed to the right.</p>
 <p>I will continue with investigating whether there is any relationship between monthly income and education as well as between monthly income and gender.</p>
-<pre class="r"><code>options(&quot;scipen&quot;=100, &quot;digits&quot;=4)
+<pre class="r"><code>options(scipen=100, digits=2)
 
-monthly_income_education_plot &lt;- ggplot(hr_cleaned,
-   aes(
+# reorder levels of education 
+hr_cleaned$education &lt;- factor(hr_cleaned$education, c(&quot;Below College&quot;, &quot;College&quot;, &quot;Bachelor&quot;, &quot;Master&quot;, &quot;Doctor&quot;))
+
+# calculate mean and median income per education level
+monthly_income_ed &lt;- hr_cleaned %&gt;%
+  group_by(education) %&gt;%
+  summarize(median_income = round(median(monthly_income)), mean_income = round(mean(monthly_income))) # round to nearest digit
+  
+monthly_income_ed</code></pre>
+<pre><code>## # A tibble: 5 x 3
+##   education     median_income mean_income
+##   &lt;fct&gt;                 &lt;dbl&gt;       &lt;dbl&gt;
+## 1 Below College          3849        5641
+## 2 College                4892        6227
+## 3 Bachelor               4762        6517
+## 4 Master                 5342        6832
+## 5 Doctor                 6203        8278</code></pre>
+<pre class="r"><code># plot median income per education level and include mean interactively
+monthly_income_education_plot &lt;- monthly_income_ed %&gt;%
+  ggplot(aes(
      x = education, 
-     y = monthly_income,
-     color = gender
-   )) + 
-  geom_col() +
-  theme(text = element_text(size=40))+
+     y = median_income,
+     text = paste0(&quot;Median: $&quot;, median_income,&quot; mean: $&quot;, mean_income) # label for ggplotly (including mean income)
+     )) + 
+  geom_col(fill = &quot;#fd8d3c&quot;) +
   labs(
     title = &quot;Monthly income vs. education&quot;,
-    x = &quot;Monthly income&quot;,
-    y = &quot;Education&quot;
+    x = &quot;Education level&quot;,
+    y = &quot;Monthly income&quot;
   ) +
   NULL
 
-monthly_income_gender_plot &lt;- ggplot(hr_cleaned,
-   aes(
+# convert into interactive graph
+monthly_income_education_plotly &lt;- ggplotly(monthly_income_education_plot, tooltip = &quot;text&quot;)
+
+# add title for ggplotly
+monthly_income_education_plotly %&gt;%
+  layout(title = list(text = paste0(&#39;Income across eduation levels&#39;,
+                                    &#39;&lt;br&gt;&#39;,
+                                    &#39;&lt;sup&gt;&#39;,
+                                    &#39;Income increases with additional education level&#39;,
+                                    &#39;&lt;/sup&gt;&#39;))) </code></pre>
+<div id="htmlwidget-3" style="width:1920px;height:648px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3">{"x":{"data":[{"orientation":"v","width":[0.9,0.9,0.9,0.9,0.9],"base":[0,0,0,0,0],"x":[1,2,3,4,5],"y":[3849,4892,4762,5342,6203],"text":["Median: $3849 mean: $5641","Median: $4892 mean: $6227","Median: $4762 mean: $6517","Median: $5342 mean: $6832","Median: $6203 mean: $8278"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(253,141,60,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":58.7434158941008,"r":7.97011207970112,"b":56.2926064295927,"l":53.3997509339975},"plot_bgcolor":"rgba(250,247,242,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022},"title":{"text":"Income across eduation levels<br><sup>Income increases with additional education level<\/sup>","font":{"color":"rgba(91,79,65,1)","family":"","size":19.1282689912827},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,5.6],"tickmode":"array","ticktext":["Below College","College","Bachelor","Master","Doctor"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["Below College","College","Bachelor","Master","Doctor"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Education level","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-310.15,6513.15],"tickmode":"array","ticktext":["0","2000","4000","6000"],"tickvals":[0,2000,4000,6000],"categoryorder":"array","categoryarray":["0","2000","4000","6000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Monthly income","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"rgba(255,255,255,1)","borderwidth":1.88976377952756,"font":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"83bcf4a6944":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"83bcf4a6944","visdat":{"83bcf4a6944":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># calculate mean and median income per gender
+monthly_income_sex &lt;- hr_cleaned %&gt;%
+  group_by(gender) %&gt;%
+  summarize(median_income = round(median(monthly_income)), mean_income = round(mean(monthly_income))) # round to nearest digit
+  
+monthly_income_sex</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   gender median_income mean_income
+##   &lt;chr&gt;          &lt;dbl&gt;       &lt;dbl&gt;
+## 1 Female          5082        6687
+## 2 Male            4838        6381</code></pre>
+<pre class="r"><code># plot median income per gender and include mean interactively
+monthly_income_gender_plot &lt;- monthly_income_sex %&gt;%
+  ggplot(aes(
      x = gender, 
-     y = monthly_income,
-     color = gender
-   )) + 
-  geom_col() +
-  theme(text = element_text(size=30))+
+     y = median_income,
+     text = paste0(&quot;Median: $&quot;, median_income,&quot; mean: $&quot;, mean_income) # label for ggplotly (including mean income)
+     )) + 
+  geom_col(fill = &quot;#fc4e2a&quot;) +
   labs(
-    title = &quot;Monthly income vs. gender&quot;,
-    x = &quot;Monthly income&quot;,
-    y = &quot;Gender&quot;
+    title = &quot;Monthly income per gender&quot;,
+    x = &quot;&quot;,
+    y = &quot;Monthly income&quot;
   ) +
   NULL
 
-monthly_income_education_plot</code></pre>
-<p><img src="/blogs/employees_files/figure-html/monthly_income_gender_education_plots-1.png" width="1920" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>monthly_income_gender_plot</code></pre>
-<p><img src="/blogs/employees_files/figure-html/monthly_income_gender_education_plots-2.png" width="1920" style="display: block; margin: auto;" /></p>
-<p>Answer:</p>
-<ul>
-<li>There is an inverted U-shaped relationship between education and monthly income. Bachelors’ income is higher than college’s and under college’s, since most of the high-payment jobs require at least bachelor’s degrees. And Bachelors’ income is also greater than masters’ and PhDs’ income, probably because given they all meet most companies’ basic education requirement, bachelors always have more working experience since they step into careers earlier.</li>
-<li>Male monthly incomes are higher than female. Gender inequality is still very common in job markets.</li>
-</ul>
+# convert into interactive graph
+monthly_income_gender_plotly &lt;- ggplotly(monthly_income_gender_plot, tooltip = &quot;text&quot;)
+
+# add title for ggplotly
+monthly_income_gender_plotly %&gt;%
+  layout(title = list(text = paste0(&#39;Income per gender&#39;,
+                                    &#39;&lt;br&gt;&#39;,
+                                    &#39;&lt;sup&gt;&#39;,
+                                    &#39;Median and mean income are higher for women&#39;,
+                                    &#39;&lt;/sup&gt;&#39;))) </code></pre>
+<p><div id="htmlwidget-4" style="width:1920px;height:648px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4">{"x":{"data":[{"orientation":"v","width":[0.9,0.9],"base":[0,0],"x":[1,2],"y":[5082,4838],"text":["Median: $5082 mean: $6687","Median: $4838 mean: $6381"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(252,78,42,1)","line":{"width":1.88976377952756,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":58.7434158941008,"r":7.97011207970112,"b":40.3523822701905,"l":53.3997509339975},"plot_bgcolor":"rgba(250,247,242,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022},"title":{"text":"Income per gender<br><sup>Median and mean income are higher for women<\/sup>","font":{"color":"rgba(91,79,65,1)","family":"","size":19.1282689912827},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["Female","Male"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["Female","Male"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-254.1,5336.1],"tickmode":"array","ticktext":["0","1000","2000","3000","4000","5000"],"tickvals":[2.8421709430404e-14,1000,2000,3000,4000,5000],"categoryorder":"array","categoryarray":["0","1000","2000","3000","4000","5000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(141,122,100,1)","ticklen":3.98505603985056,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218},"tickangle":-0,"showline":true,"linecolor":"rgba(141,122,100,1)","linewidth":0.66417600664176,"showgrid":true,"gridcolor":"rgba(227,221,204,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"Monthly income","font":{"color":"rgba(91,79,65,1)","family":"","size":15.9402241594022}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"rgba(255,255,255,1)","borderwidth":1.88976377952756,"font":{"color":"rgba(91,79,65,1)","family":"","size":12.7521793275218}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"83bc5b3bcd87":{"x":{},"y":{},"text":{},"type":"bar"}},"cur_data":"83bc5b3bcd87","visdat":{"83bc5b3bcd87":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+The monthly income increases with additional levels of education, which is intuitive. Interestingly, the median income is higher for employees with a College degree than for those with a Bachelor degree. The mean, however, is higher for the Bachelor degree. This might imply that a Bachelor is not worth much more than a College degree when it comes to monthly income.</p>
+<p>When comparing income between gender, the female mean and median income is higher than the male ones. This can, however, be influenced by various factors, such as the job position and education levle.</p>
 <ol start="5" style="list-style-type: decimal">
 <li>Plot a boxplot of income vs job role. Make sure the highest-paid job roles appear first</li>
 </ol>
