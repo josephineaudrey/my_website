@@ -30,23 +30,23 @@
     </item>
     
     <item>
+      <title>Social Media</title>
+      <link>/blogs/socialmedia/</link>
+      <pubDate>Sun, 20 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blogs/socialmedia/</guid>
+      <description>SOCIAL MEDIA The General Social Survey (GSS) gathers data on American society in order to monitor and explain trends in attitudes, behaviours, and attributes. Many trends have been tracked for decades, so one can see the evolution of attitudes, etc in American Society.
+In the following, I will look into the users of different social medias in the US.
+Instagram and Snapchat, by sex Can we estimate the population proportion of Snapchat or Instagram users in 2016?</description>
+    </item>
+    
+    <item>
       <title>Pay discriminaton</title>
       <link>/blogs/omega/</link>
       <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>/blogs/omega/</guid>
       <description>Omega Group - Pay Discrimination At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women.</description>
-    </item>
-    
-    <item>
-      <title>Social Media</title>
-      <link>/blogs/socialmedia/</link>
-      <pubDate>Fri, 18 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/blogs/socialmedia/</guid>
-      <description>SOCIAL MEDIA The General Social Survey (GSS) gathers data on American society in order to monitor and explain trends in attitudes, behaviours, and attributes. Many trends have been tracked for decades, so one can see the evolution of attitudes, etc in American Society.
-Instagram and Snapchat, by sex Can we estimate the population proportion of Snapchat or Instagram users in 2016?
-gss_snap_insta &amp;lt;- gss %&amp;gt;% # create the new variable for snap_insta mutate(snap_insta = case_when( snapchat == &amp;quot;Yes&amp;quot; | instagrm == &amp;quot;Yes&amp;quot; ~ &amp;quot;Yes&amp;quot;, snapchat == &amp;quot;No&amp;quot; &amp;amp; instagrm == &amp;quot;No&amp;quot; ~ &amp;quot;No&amp;quot;, TRUE ~ NA_character_)) # calculate the proportion gss_prop &amp;lt;- gss_snap_insta %&amp;gt;% filter(!</description>
     </item>
     
     <item>
