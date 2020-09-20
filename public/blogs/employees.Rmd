@@ -50,7 +50,7 @@ library(ggplot2)
 
 # IBM HR Analytics
 
-During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers of productive employees. After cleaning the data, I will analyze several HR data and different relationships within. 
+During my internship at an HR Tech start-up Leapsome (leapsome.com) I learned a lot about the importance of employee retention and employee satisfaction.  Employee engagement and meaningful feedback, for example, are two drivers of productive employees. This data set on past and current employees at a company can give insights about what can contribute to workforce attrition. After cleaning the data set with data about around 1500 employees, I will analyze several HR data and different relationships within. 
 
 ```{r loading_HR_dataset, include=FALSE}
 hr_dataset <- read_csv( "datasets_1067_1925_WA_Fn-UseC_-HR-Employee-Attrition.csv")
@@ -113,45 +113,74 @@ hr_cleaned <- hr_dataset %>%
 attrition_rate <- filter(hr_cleaned %>% 
          group_by(attrition) %>% 
          summarise(n = count(attrition)) %>% 
-         mutate(attrition_rate = (n*100)/sum(n)), attrition == "Yes") #added column for the attrition rate %
+         mutate(attrition_rate = (n*100)/sum(n)), attrition == "Yes") # create new column for the attrition rate %
 
-attrition_rate
+attrition_rate 
 
 ```
 
-Answer:
 The attrition rate is 16.1%.
 
+
+Next, I will investigate the job satisfaction among the employees and see if this differs by gender.
 ```{r job_satisfaction}
+# calculate the average job satisfaction 
 job_satisfaction_gender <- hr_dataset %>% 
   group_by(Gender) %>% 
-  summarise(mean_js = mean(JobSatisfaction)) 
+  summarize(mean_js = mean(JobSatisfaction)) 
          
 job_satisfaction_gender
 
-job_satisfaction_gender_plot <- hr_dataset %>%
-  ggplot(aes(x = JobSatisfaction)) +
-  geom_histogram(binwith = 1, fill = "blue") +
-  facet_wrap(~Gender) +
-  theme_minimal() +
+# plot average job satisfaction 
+job_satisfaction_gender_plot <- job_satisfaction_gender %>%
+  ggplot(aes(
+    x = Gender, 
+    y = mean_js, 
+    fill = Gender)) +
+  geom_col() +
+  # facet_wrap(~Gender) +
+  ylim(0, 5) +
+  labs(
+    title = "Job Satisfaction by Gender", 
+    y = "Average Job Satisfaction") +
+  theme_bw() +
   NULL
 
 job_satisfaction_gender_plot
 ```
+Job satisfaction seems to be slightly higher for men than for women. 
 
-3. How are `job_satisfaction` and `work_life_balance` distributed? Don't just report counts, but express categories as % of total
+I will continue by investigating how are job satisfaction and work-life-balance are distributed
 
 ```{r job_sat_and_worklife_balance}
+
+
 job_sat <- hr_cleaned %>% 
   group_by(job_satisfaction) %>% 
   summarise(n = count(job_satisfaction)) %>% 
   mutate(job_sat_perc = (n*100)/sum(n))
+
+job_sat
+
+job_sat_plot <- job_sat %>%
+  ggplot(aes(x = n, y = job_satisfaction)) +
+  geom_col() +
+  labs(
+    title = "Distribution of Job Satisfaction", 
+    y = "Level of Job Satisfaction") +
+  theme_bw() +
+  theme_bw()
+  NULL
+  
+job_sat_plot
 
 work_life_balance <- hr_cleaned %>% 
   group_by(work_life_balance) %>% 
   summarise(n = count(work_life_balance)) %>% 
   mutate(work_life_perc = (n*100)/sum(n)) %>% 
   arrange(desc(work_life_perc))
+
+work_life_balance
 
 ```
 

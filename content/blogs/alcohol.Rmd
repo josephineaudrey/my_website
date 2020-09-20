@@ -105,6 +105,8 @@ top25_alcohol_plotly %>%
 
 
 
+
+
 ## Beer
 ```{r beer_plot}
 # filter for top 25 beer consuming countries
@@ -131,6 +133,8 @@ top25_beer_plotly <- ggplotly(top25_beer_plot, tooltip = "text")
 top25_beer_plotly
 
 ```
+
+
 
 
 
@@ -165,6 +169,8 @@ top25_wine_plotly
 
 
 
+
+
 ## Spirit
 ```{r spirit_plot}
 # filter for top 25 spirit consuming countries
@@ -190,6 +196,7 @@ top25_spirit_plotly <- ggplotly(top25_spirit_plot, tooltip = "text")
 
 top25_spirit_plotly
 ```
+
 
 
 

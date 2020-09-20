@@ -1,7 +1,7 @@
 ---
 title: 'Employee Data'
 author: "Josephine Haag"
-date: "2020-09-19"
+date: "2020-09-20"
 output:
   html_document:
     code_folding: show
@@ -18,7 +18,7 @@ output:
 
 <div id="ibm-hr-analytics" class="section level1">
 <h1>IBM HR Analytics</h1>
-<p>During my internship at an HR Tech start-up Leapsome I learned a lot about the importance of employee retention and employee satisfaction and how feedback and employee engagement are two drivers of productive employees. After cleaning the data, I will analyze several HR data and different relationships within.</p>
+<p>During my internship at an HR Tech start-up Leapsome (leapsome.com) I learned a lot about the importance of employee retention and employee satisfaction. Employee engagement and meaningful feedback, for example, are two drivers of productive employees. This data set on past and current employees at a company can give insights about what can contribute to workforce attrition. After cleaning the data set with data about around 1500 employees, I will analyze several HR data and different relationships within.</p>
 <div id="employee-retention" class="section level2">
 <h2>Employee Retention</h2>
 <div id="how-often-do-people-leave-the-company-attrition" class="section level3">
@@ -26,18 +26,19 @@ output:
 <pre class="r"><code>attrition_rate &lt;- filter(hr_cleaned %&gt;% 
          group_by(attrition) %&gt;% 
          summarise(n = count(attrition)) %&gt;% 
-         mutate(attrition_rate = (n*100)/sum(n)), attrition == &quot;Yes&quot;) #added column for the attrition rate %
+         mutate(attrition_rate = (n*100)/sum(n)), attrition == &quot;Yes&quot;) # create new column for the attrition rate %
 
-attrition_rate</code></pre>
+attrition_rate </code></pre>
 <pre><code>## # A tibble: 1 x 3
 ##   attrition     n attrition_rate
 ##   &lt;chr&gt;     &lt;int&gt;          &lt;dbl&gt;
 ## 1 Yes         237           16.1</code></pre>
-<p>Answer:
-The attrition rate is 16.1%.</p>
-<pre class="r"><code>job_satisfaction_gender &lt;- hr_dataset %&gt;% 
+<p>The attrition rate is 16.1%.</p>
+<p>Next, I will investigate the job satisfaction among the employees and see if this differs by gender.</p>
+<pre class="r"><code># calculate the average job satisfaction 
+job_satisfaction_gender &lt;- hr_dataset %&gt;% 
   group_by(Gender) %&gt;% 
-  summarise(mean_js = mean(JobSatisfaction)) 
+  summarize(mean_js = mean(JobSatisfaction)) 
          
 job_satisfaction_gender</code></pre>
 <pre><code>## # A tibble: 2 x 2
@@ -45,28 +46,64 @@ job_satisfaction_gender</code></pre>
 ##   &lt;chr&gt;    &lt;dbl&gt;
 ## 1 Female    2.68
 ## 2 Male      2.76</code></pre>
-<pre class="r"><code>job_satisfaction_gender_plot &lt;- hr_dataset %&gt;%
-  ggplot(aes(x = JobSatisfaction)) +
-  geom_histogram(binwith = 1, fill = &quot;blue&quot;) +
-  facet_wrap(~Gender) +
-  theme_minimal() +
+<pre class="r"><code># plot average job satisfaction 
+job_satisfaction_gender_plot &lt;- job_satisfaction_gender %&gt;%
+  ggplot(aes(
+    x = Gender, 
+    y = mean_js, 
+    fill = Gender)) +
+  geom_col() +
+  # facet_wrap(~Gender) +
+  ylim(0, 5) +
+  labs(
+    title = &quot;Job Satisfaction by Gender&quot;, 
+    y = &quot;Average Job Satisfaction&quot;) +
+  theme_bw() +
   NULL
 
 job_satisfaction_gender_plot</code></pre>
-<p><img src="/blogs/employees_files/figure-html/job_satisfaction-1.png" width="648" style="display: block; margin: auto;" /></p>
-<ol start="3" style="list-style-type: decimal">
-<li>How are <code>job_satisfaction</code> and <code>work_life_balance</code> distributed? Don’t just report counts, but express categories as % of total</li>
-</ol>
+<p><img src="/blogs/employees_files/figure-html/job_satisfaction-1.png" width="648" style="display: block; margin: auto;" />
+Job satisfaction seems to be slightly higher for men than for women.</p>
+<p>I will continue by investigating how are job satisfaction and work-life-balance are distributed</p>
 <pre class="r"><code>job_sat &lt;- hr_cleaned %&gt;% 
   group_by(job_satisfaction) %&gt;% 
   summarise(n = count(job_satisfaction)) %&gt;% 
   mutate(job_sat_perc = (n*100)/sum(n))
 
-work_life_balance &lt;- hr_cleaned %&gt;% 
+job_sat</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##   job_satisfaction     n job_sat_perc
+##   &lt;chr&gt;            &lt;int&gt;        &lt;dbl&gt;
+## 1 High               442         30.1
+## 2 Low                289         19.7
+## 3 Medium             280         19.0
+## 4 Very High          459         31.2</code></pre>
+<pre class="r"><code>job_sat_plot &lt;- job_sat %&gt;%
+  ggplot(aes(x = n, y = job_satisfaction)) +
+  geom_col() +
+  labs(
+    title = &quot;Distribution of Job Satisfaction&quot;, 
+    y = &quot;Level of Job Satisfaction&quot;) +
+  theme_bw() +
+  theme_bw()
+  NULL</code></pre>
+<pre><code>## NULL</code></pre>
+<pre class="r"><code>job_sat_plot</code></pre>
+<p><img src="/blogs/employees_files/figure-html/job_sat_and_worklife_balance-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>work_life_balance &lt;- hr_cleaned %&gt;% 
   group_by(work_life_balance) %&gt;% 
   summarise(n = count(work_life_balance)) %&gt;% 
   mutate(work_life_perc = (n*100)/sum(n)) %&gt;% 
-  arrange(desc(work_life_perc))</code></pre>
+  arrange(desc(work_life_perc))
+
+work_life_balance</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##   work_life_balance     n work_life_perc
+##   &lt;chr&gt;             &lt;int&gt;          &lt;dbl&gt;
+## 1 Better              893          60.7 
+## 2 Good                344          23.4 
+## 3 Best                153          10.4 
+## 4 Bad                  80           5.44</code></pre>
 <p>Answer:</p>
 <p><code>job_satisfaction</code> is right skewed, with around 60% of the values on the right.
 <code>work_life_balance</code> seems to better resemble a normal distribution, a bit skewed to the right.</p>
