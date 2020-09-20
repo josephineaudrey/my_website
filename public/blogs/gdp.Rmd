@@ -1,0 +1,212 @@
+---
+title: "GDP Components"
+author: "Josephine Haag"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: show
+    highlight: default
+    number_sections: yes
+    theme: flatly
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r, setup, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+
+```{r load-libraries, echo=FALSE, include=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(GGally)
+library(readxl)
+library(here)
+library(skimr)
+library(janitor)
+library(broom)
+library(tidyquant)
+library(infer)
+library(openintro)
+library(plotly)
+library(ggthemr)
+ggthemr('dust')
+```
+
+# Challenge: GDP components over time and among countries
+
+After cleaning the dataset, I will try to reproduce a given graph with a different theme and then analyze the different GDP components across countries 
+```{r read_GDP_data, include=FALSE}
+UN_GDP_data  <-  read_excel(("Download-GDPconstant-USD-countries.xls"), # Excel filename
+                sheet="Download-GDPconstant-USD-countr", # Sheet name
+                skip=2) # Number of rows to skip
+```
+
+```{r reshape_GDP_data}
+# tidy data and convert to long format
+tidy_GDP_data <- UN_GDP_data %>%
+  pivot_longer(cols = c('1970':'2017'), 
+               names_to = "Year", 
+               values_to = "Amount") %>%
+  rename(Components = IndicatorName) %>%
+  # Components [Components == "Exports of goods and services"] <- "Exports"
+  # rename indicators
+  mutate(Components = case_when( 
+  Components == "Final consumption expenditure" ~ "Final consumption",
+  Components == "Household consumption expenditure (including Non-profit institutions serving households)" ~ "Household expenditure",
+  Components == "General government final consumption expenditure" ~ "Government expenditure",
+  Components == "Gross capital formation" ~ "Gross capital formation",
+  Components == "Gross fixed capital formation (including Acquisitions less disposals of valuables)" ~ "Gross fixed capital",
+  Components == "Changes in inventories" ~ "Inventory change",
+  Components == "Exports of goods and services" ~ "Exports",
+  Components == "Imports of goods and services" ~ "Imports",
+  Components == "Gross Domestic Product (GDP)" ~ "GDP",
+  Components == "Agriculture, hunting, forestry, fishing (ISIC A-B)" ~ "ISIC A-B",
+  Components == "Mining, Manufacturing, Utilities (ISIC C-E)" ~ "ISIC C-E",
+  Components == "Manufacturing (ISIC D)" ~ "ISIC D",
+  Components == "Construction (ISIC F)" ~ "ISIC F",
+  Components == "Wholesale, retail trade, restaurants and hotels (ISIC G-H)" ~ "ISIC G-H",
+  Components == "Transport, storage and communication (ISIC I)" ~ "ISIC I",
+  Components == "Other Activities (ISIC J-P)" ~ "ISIC J-P",
+  Components == "Total Value Added" ~ "TVA")) %>%
+  mutate(Amount = (Amount / 1e9)) # divide to express data in billions
+glimpse(tidy_GDP_data)
+```
+
+First, can you produce this plot?
+
+
+```{r gdp1, echo=FALSE, out.width="100%"}
+knitr::include_graphics(("gdp1.png"), error = FALSE)
+```
+
+```{r create graph}
+# define 3 countries
+country_list <- c("United States","India", "Germany")
+
+# define 5 components
+indicator_list <- c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports")
+tidy_GDP_data_filter <- tidy_GDP_data %>%
+    filter(Country %in% country_list, Components %in% indicator_list) 
+
+# factor components
+tidy_GDP_data_filter$Components <- factor(tidy_GDP_data_filter$Components, levels = indicator_list)
+countries_3 <- tidy_GDP_data_filter  %>%
+  
+  # filter(Country %in% country_list, Components %in% indicator_list) %>%
+  ggplot(aes(x = Year, y = Amount, color = Components)) +
+  geom_line(aes(group = Components)) +
+  facet_wrap(~Country) +
+  labs(title = "GDP components over time",
+       subtitle = "In constant 2010 USD",
+       y = "Billion US$", 
+       x = "") +
+  guides(colour = guide_legend("Components of GDP")) +
+  scale_x_discrete(breaks = seq(1970, 2017, by = 10)) + # scale by 10 years
+  expand_limits(y = 0) +
+  NULL
+  
+countries_3        
+```
+
+```{r calc GDP}
+wide_GDP_data <- tidy_GDP_data %>%
+  pivot_wider(names_from = "Components", values_from = "Amount") %>%
+  select(Country, Year, "Household expenditure":"GDP")
+wide_GDP_data
+wide_GDP_calc <- wide_GDP_data %>%
+   mutate(`Net Exports` = Exports - Imports) %>% 
+   # GDP = C + I + G + Nx
+   mutate(GDP_calc = (`Household expenditure` + `Gross capital formation` + `Government expenditure` + `Net Exports`))
+ 
+wide_GDP_calc
+```
+
+We can see that for every observation there can be small deviations between the calculated and the given GDP ranging up to 6%.
+
+```{r difference GDP}
+# calculate % difference between GDP given and GDP calculated
+wide_GDP_calc_diff <- wide_GDP_calc %>%
+  mutate(GDP_diff = abs((GDP - GDP_calc)/GDP))
+         
+wide_GDP_calc_diff 
+difference_plot <- wide_GDP_calc_diff %>%
+  ggplot(aes(x=GDP_diff)) +
+  geom_histogram()
+
+# show the distribution of differences
+difference_plot
+sum(wide_GDP_calc_diff$GDP_diff, na.rm = TRUE)
+```
+
+
+```{r gdp2, echo=FALSE, out.width="100%"}
+knitr::include_graphics(("gdp2.png"), error = FALSE)
+```
+
+
+Looking at this chart, I will try to analyze the different dynamics among these three countries? 
+First of all, the graph shows the proportion of GDP components in Germany, India, and the US.
+
+In Germany, these proportions have stayed relatively constant over the years. As in the other two countries, Household Expenditure represents the largest proportion of GDP at around 60%. Net Exports have remained around 0%, meaning that Exports were almost equal to Imports. However, since the 2000s Exports have increased, leading to a trade surplus. This could possibly be related to the introduction of the Euro in 1999.
+
+India demonstrates quite some changes in proportion. The share of household expenditure has decreased significantly over the years while the share of gross capital formation has increased. This makes sense because India has developed a lot in the past years and it has been heavily invested in India. Unlike Germany, Net export are mostly below 0, which means that exports are lower than imports and there is a trade deficit.
+
+The US also has a trade deficit, which has increased over the years. It is interesting to see that the share of Government expenditure has decreased in the US while the share of gross capital formation has overtaken the share of Government expenditure. 
+
+
+### GDP Components
+
+Since I am German, was born in the United States and grew up in Germany, I will compare these three countries in my next analysis, which investigates the different GDP components over time.
+
+```{r}
+# make a second country list
+country_list_2 <- c("United States","Switzerland", "Germany")
+
+# mutate into percentage
+wide_GDP_calc_prop <- wide_GDP_calc %>%
+  mutate(`Net exports` = `Net Exports` / GDP_calc,
+         `Household Expenditure` = `Household expenditure` / GDP_calc,
+         `Government Expenditure` = `Government expenditure` / GDP_calc,
+         `Gross Capital Formation` = `Gross capital formation` / GDP_calc ) %>%
+  select(Country, Year, "Net exports":"Gross Capital Formation")
+wide_GDP_calc_prop
+long_GDP_prop <- wide_GDP_calc_prop %>%
+    pivot_longer(cols = c(`Net exports`:`Gross Capital Formation`),
+                 names_to = "Component", 
+                 values_to = "Proportion")
+long_GDP_prop
+tidy_GDP_data_prop_filter <- tidy_GDP_data %>%
+    filter(Country %in% country_list_2, Components %in% indicator_list) 
+
+# graph
+countries_prop <- long_GDP_prop %>%
+  filter(Country %in% country_list_2) %>%
+  ggplot(aes(x = Year, y = Proportion, color = Component)) +
+  geom_line(aes(group = Component)) +
+  facet_wrap(~Country) +
+  labs(title = "GDP and its breakdown at constant 2010 prices in US Doller",
+       y = "proportion", 
+       x = "") +
+  guides(colour = guide_legend("Components of GDP")) +
+  scale_x_discrete(breaks = seq(1970, 2017, by = 10)) + # scale correctly
+  scale_y_continuous(labels = scales::percent) + # label y axis with proportions
+  expand_limits(y = 0) +
+  NULL
+
+countries_prop 
