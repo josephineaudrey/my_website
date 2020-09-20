@@ -94,7 +94,7 @@ disqusShortname = ""
     [[params.tiles.showcase]]
       title = "Gender pay gap"
       subtitle = "Is pay discrimination real?"
-      image = "pic01.jpg"
+      image = "pay.jpg"
       url = "blogs/omega"
 
     [[params.tiles.showcase]]
@@ -110,22 +110,22 @@ disqusShortname = ""
       url = "blogs/employees"
 
     [[params.tiles.showcase]]
-      title = "Copenhagen"
-      subtitle = "How much is a 4-day apartment? "
-      image = "pic04.jpg"
-      url = "blogs/ipsum"
+     title = "The social media trap"
+     subtitle = "Who uses social media these days?"
+     image = "socialmedia.jpg"
+     url = "blogs/socialmedia"
 
-    [[params.tiles.showcase]]
+   # [[params.tiles.showcase]]
      # title = "Resume"
      # subtitle = "My experiences and education"
      # image = "pic05.jpg"
      # url = "blogs/ipsum"
 
-    [[params.tiles.showcase]]
-      title = "The social media trap"
-      subtitle = "Who uses social media these days?"
-      image = "socialmedia.jpg"
-      url = "blogs/socialmedia"
+   # [[params.tiles.showcase]]
+     # title = "The social media trap"
+     # subtitle = "Who uses social media these days?"
+     # image = "socialmedia.jpg"
+     # url = "blogs/socialmedia"
     # You can make more showcases by copy and pasting the code above
 
   [params.blog]

@@ -51,7 +51,7 @@ ggthemr('dust')
 
 ```
 
-# IBM HR Analytics
+# IBM HR Analytics: Employee satisfaction and income 
 
 During my internship at an HR Tech start-up Leapsome (leapsome.com) I learned a lot about the importance of employee retention and employee satisfaction.  Employee engagement and meaningful feedback, for example, are two drivers of productive employees. This data set on past and current employees at a company can give insights about what can contribute to workforce attrition. After cleaning the data set with data about around 1500 employees, I will analyze several HR data and different relationships within. 
 
@@ -164,7 +164,7 @@ I will continue by investigating how are job satisfaction and work-life-balance 
 job_sat <- hr_cleaned %>% 
   group_by(job_satisfaction) %>% 
   summarise(n = count(job_satisfaction)) %>% 
-  mutate(job_sat_perc = (n*100)/sum(n))
+  mutate(job_sat_perc = round((n*100)/sum(n)))
 
 job_sat
 
@@ -176,7 +176,7 @@ job_sat_plot <- job_sat %>%
   ggplot(aes(
     x = job_sat_perc, 
     y = job_satisfaction, 
-    text = paste0("count: ", n))) + # label for ggplotly
+    text = paste0("Count: ", n, ", percentage: ", job_sat_perc, "%"))) + # label for ggplotly
   geom_col(fill = "#fecc5c") +
   labs(
     title = "Distribution of Job Satisfaction", 
@@ -201,7 +201,7 @@ job_sat_plotly %>%
 work_life_balance <- hr_cleaned %>% 
   group_by(work_life_balance) %>% 
   summarise(n = count(work_life_balance)) %>% 
-  mutate(work_life_perc = (n*100)/sum(n)) %>% 
+  mutate(work_life_perc = round((n*100)/sum(n))) %>% 
   arrange(desc(work_life_perc))
 
 work_life_balance
@@ -214,7 +214,7 @@ work_life_balance_plot <- work_life_balance %>%
   ggplot(aes(
     x = work_life_perc, 
     y = work_life_balance, 
-    text = paste0("count: ", n))) + # label for ggplotly
+    text = paste0("Count: ", n, ", percentage: ", work_life_perc, "%"))) + # label for ggplotly
   geom_col(fill = "#feb24c") +
   labs(
     title = "Distribution of Work Life Balance", 
@@ -238,6 +238,10 @@ work_life_balance_plotly %>%
 Job satisfaction is right skewed, with around 60% of the values on the right.
 Work life balance seems to better resemble a normal distribution, a bit skewed to the right.
 
+
+## Monthly income
+
+### Education and income
 
 I will continue with investigating whether there is any relationship between monthly income and education as well as between monthly income and gender.
 ```{r monthly_income_education_plots, fig.width=20}
@@ -280,6 +284,28 @@ monthly_income_education_plotly %>%
                                     '</sup>'))) 
 ```
 
+Next we will plot the distribution of income by education level.
+
+```{r distribution_by_education, fig.width=10}
+
+monthly_income_education_distr <- hr_cleaned %>%
+  ggplot(aes(
+    x = monthly_income
+  )) + 
+  geom_histogram(fill = "#bd0026") + 
+  facet_wrap(~education,ncol=2, scales = "free") + 
+  labs(
+    title = "Distribution of income by education",
+    x = ""
+  ) +
+  NULL
+
+monthly_income_education_distr
+
+```
+
+### Gender and income
+
 ```{r monthly_income_gender_plots, fig.width=20}
 # calculate mean and median income per gender
 monthly_income_sex <- hr_cleaned %>%
@@ -319,85 +345,30 @@ The monthly income increases with additional levels of education, which is intui
 
 When comparing income between gender, the female mean and median income is higher than the male ones. This can, however, be influenced by various factors, such as the job position and education levle.
 
+### Job role and income
 
-5. Plot a boxplot of income vs job role. Make sure the highest-paid job roles appear first
-```{r income_jobrole_boxplot, fig.width=40, fig.height=20}
-
-income_jobrole_boxplot <- ggplot(hr_cleaned, 
-       aes(
-         x= reorder(job_role, -monthly_income), 
-         y = monthly_income)) + 
-  geom_boxplot() +
+Next, we will investigate the relationship between income vs job role.
+```{r income_jobrole_boxplot}
+# plot income per job role
+income_jobrole_boxplot <- hr_cleaned %>%
+  ggplot(aes(
+         x = monthly_income,
+         y = reorder(job_role, monthly_income)
+         )) + 
+  geom_boxplot(fill="#e31a1c") +
   labs(
     title = "Income per job role",
-    x = "Job role",
-    y = "Income"
+    x = "Income",
+    y = "Job role"
   ) +
-  theme_minimal() +
-  theme(text = element_text(size=30))+
   NULL
 
 income_jobrole_boxplot
 
 ```
+Managers have the highest income followed by research directors and then after a gap, healthcare representatives, manufacturing directors and sales executives. Sales representatives earn the least, however, they have a lot of outliers for this and other "low-paying" roles. 
 
-
-6. Calculate and plot a bar chart of the mean (or median?) income by education level.
-
-```{r barchart_income_education}
-Education_mean_income_bar <- ggplot(hr_cleaned, aes(
-    x = education, 
-    y = mean(monthly_income
-    ))) + 
-  geom_col() +
-  labs(
-    title = "Mean monthly income per education",
-    x = "Education",
-    y = "Mean monthly income"
-  ) +
-  theme_minimal() +
-  theme(text = element_text(size=10))+
-  NULL
-
-Education_median_income_bar <- ggplot(hr_cleaned, aes(
-    x = education, 
-    y = median(monthly_income
-    ))) + 
-  geom_col() +
-  labs(
-    title = "Median monthly income per education",
-    x = "Education",
-    y = "Median monthly income") +
-  theme_minimal() +
-  theme(text = element_text(size=10))+
-  NULL
-
-Education_mean_income_bar
-Education_median_income_bar
-
-```
-
-7. Plot the distribution of income by education level. Use a facet_wrap and a theme from `ggthemes`
-
-```{r distribution_by_education, fig.width=10}
-
-Monthly_income_education_distr <- ggplot(hr_cleaned, aes(
-    x = monthly_income
-  )) + 
-  geom_histogram() + 
-  facet_wrap(~education,ncol=2) + 
-  labs(
-    title = "Distribution of income by education",
-    x = "Education"
-  ) +
-  theme_economist_white() +
-  NULL
-
-Monthly_income_education_distr
-
-```
-
-
+### Age and income
 1. Plot income vs age, faceted by `job_role`
 ```{r Income_vs_age_by_jobrole}
 
@@ -405,16 +376,38 @@ Income_vs_age_facet <- ggplot(hr_cleaned, aes(
     x = age, 
     y = monthly_income
   )) + 
-  geom_col(width = 2) + 
+  geom_col(width = 2, 
+           fill = "#800026") + 
   facet_wrap(~job_role) +
   labs(
     title = "Income vs. age by job role",
     x = "Age",
     y = "Monthly income"
   ) +
-  theme_minimal() +
   NULL
 
 Income_vs_age_facet
 
 ```
+### Job satisfaction vs income
+
+```{r scatterplot}
+# plot job satisfaction vs income
+income_satisfaction_plot<- hr_cleaned %>%
+  ggplot(aes(x = reorder(job_satisfaction, -monthly_income),
+             y = monthly_income)) +
+  geom_col(fill = "#6b2021") +
+    labs(
+    title = "Income vs. job satisfaction",
+    subtitle = "Higher income relates to higher satisfaction",
+    x = "Job satisfaction",
+    y = "Monthly income"
+  ) +
+  NULL
+
+income_satisfaction_plot
+
+```
+In conclusion, it seems that higher incomes relates to higer job satisfaction. The direction of causation is difficult to establish in this case. Employees might be more satisfied because they earn more. An alternative explanation is that those who are satisfied with their job also do a better job and, thus, earn more since they are being more productive.
+
+
