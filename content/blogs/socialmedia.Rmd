@@ -67,11 +67,87 @@ gss <- read_csv(here::here("content", "blogs", "smallgss2016.csv"),
 glimpse(gss)
 ```
 
+## Overview
+
+```{r proportions}
+# calculate the proportions snapchat
+gss_prop_snap <- gss %>%
+  filter(snapchat!="NA") %>% 
+  group_by(snapchat) %>% 
+  summarise(count = n()) %>% 
+  mutate(prop_snap = count/sum(count)) 
+gss_prop_snap
+
+# plot it with snapchat colors
+gss_plot_snap <- gss_prop_snap %>%
+  ggplot(aes(
+    x = snapchat,
+    y = prop_snap)) +
+  geom_col(fill = "#FFFC00") + # fill with snapchat color 
+    labs(
+    title = "Snapchat Usage",
+    subtitle = "Around 22% use Snapchat",
+    x = "",
+    y = "Proportion") +
+  NULL
+  
+gss_plot_snap
+
+# calculate the proportions instagram
+gss_prop_insta <- gss %>%
+  filter(instagrm!="NA") %>% 
+  group_by(instagrm) %>% 
+  summarise(count = n()) %>% 
+  mutate(prop_insta = count/sum(count)) 
+gss_prop_insta
+
+# plot it with instagram colors
+gss_plot_insta <- gss_prop_insta %>%
+  ggplot(aes(
+    x = instagrm,
+    y = prop_insta)) +
+  geom_col(fill = "#C13584") + # fill with one of the instagram colors
+  labs(
+    title = "Instagram Usage",
+    subtitle = "Around 31% use Instagram",
+    x = "",
+    y = "Proportion") +
+  NULL
+  
+gss_plot_insta
+
+# calculate the proportions twitter
+gss_prop_twitter <- gss %>%
+  filter(twitter!="NA") %>% 
+  group_by(twitter) %>% 
+  summarise(count = n()) %>% 
+  mutate(prop_twitter = count/sum(count)) 
+gss_prop_twitter
+
+# plot it
+gss_plot_twitter <- gss_prop_twitter %>%
+  ggplot(aes(
+    x = twitter,
+    y = prop_twitter)) +
+  geom_col(fill = "#1DA1F2") + # fill with twitter colors
+  labs(
+    title = "Twitter Usage",
+    subtitle = "Around 18% use Twitter",
+    x = "",
+    y = "Proportion") +
+  NULL
+
+gss_plot_twitter
+
+```
+
+
+
 ## Instagram and Snapchat, by sex
 
 Can we estimate the *population* proportion of Snapchat or Instagram users in 2016?
 
-```{r}
+```{r snapinsta}
 gss_snap_insta <- gss %>%
   # create the new variable for snap_insta
   mutate(snap_insta = case_when(
@@ -80,12 +156,12 @@ gss_snap_insta <- gss %>%
     TRUE ~ NA_character_)) 
   
 # calculate the proportion
-gss_prop <- gss_snap_insta %>%
+gss_prop_si <- gss_snap_insta %>%
   filter(!is.na(snap_insta)) %>% 
   group_by(snap_insta) %>% 
   summarise(count = n()) %>% 
   mutate(prop = count/sum(count)) 
-gss_prop
+gss_prop_si
 
 # percentile_ci
 snap_insta_formula_ci <- gss_snap_insta %>%

@@ -20,6 +20,90 @@ output:
 <h1>SOCIAL MEDIA</h1>
 <p>The <a href="http://www.gss.norc.org/">General Social Survey (GSS)</a> gathers data on American society in order to monitor and explain trends in attitudes, behaviours, and attributes. Many trends have been tracked for decades, so one can see the evolution of attitudes, etc in American Society.</p>
 <p>In the following, I will look into the users of different social medias in the US.</p>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<pre class="r"><code># calculate the proportions snapchat
+gss_prop_snap &lt;- gss %&gt;%
+  filter(snapchat!=&quot;NA&quot;) %&gt;% 
+  group_by(snapchat) %&gt;% 
+  summarise(count = n()) %&gt;% 
+  mutate(prop_snap = count/sum(count)) 
+gss_prop_snap</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   snapchat count prop_snap
+##   &lt;chr&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1 No        1061     0.773
+## 2 Yes        311     0.227</code></pre>
+<pre class="r"><code># plot it with snapchat colors
+gss_plot_snap &lt;- gss_prop_snap %&gt;%
+  ggplot(aes(
+    x = snapchat,
+    y = prop_snap)) +
+  geom_col(fill = &quot;#FFFC00&quot;) + # fill with snapchat color 
+    labs(
+    title = &quot;Snapchat Usage&quot;,
+    subtitle = &quot;Around 22% use Snapchat&quot;,
+    x = &quot;&quot;,
+    y = &quot;Proportion&quot;) +
+  NULL
+  
+gss_plot_snap</code></pre>
+<p><img src="/blogs/socialmedia_files/figure-html/proportions-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># calculate the proportions instagram
+gss_prop_insta &lt;- gss %&gt;%
+  filter(instagrm!=&quot;NA&quot;) %&gt;% 
+  group_by(instagrm) %&gt;% 
+  summarise(count = n()) %&gt;% 
+  mutate(prop_insta = count/sum(count)) 
+gss_prop_insta</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   instagrm count prop_insta
+##   &lt;chr&gt;    &lt;int&gt;      &lt;dbl&gt;
+## 1 No         949      0.692
+## 2 Yes        423      0.308</code></pre>
+<pre class="r"><code># plot it with instagram colors
+gss_plot_insta &lt;- gss_prop_insta %&gt;%
+  ggplot(aes(
+    x = instagrm,
+    y = prop_insta)) +
+  geom_col(fill = &quot;#C13584&quot;) + # fill with one of the instagram colors
+  labs(
+    title = &quot;Instagram Usage&quot;,
+    subtitle = &quot;Around 31% use Instagram&quot;,
+    x = &quot;&quot;,
+    y = &quot;Proportion&quot;) +
+  NULL
+  
+gss_plot_insta</code></pre>
+<p><img src="/blogs/socialmedia_files/figure-html/proportions-2.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># calculate the proportions twitter
+gss_prop_twitter &lt;- gss %&gt;%
+  filter(twitter!=&quot;NA&quot;) %&gt;% 
+  group_by(twitter) %&gt;% 
+  summarise(count = n()) %&gt;% 
+  mutate(prop_twitter = count/sum(count)) 
+gss_prop_twitter</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   twitter count prop_twitter
+##   &lt;chr&gt;   &lt;int&gt;        &lt;dbl&gt;
+## 1 No       1117        0.814
+## 2 Yes       255        0.186</code></pre>
+<pre class="r"><code># plot it
+gss_plot_twitter &lt;- gss_prop_twitter %&gt;%
+  ggplot(aes(
+    x = twitter,
+    y = prop_twitter)) +
+  geom_col(fill = &quot;#1DA1F2&quot;) + # fill with twitter colors
+  labs(
+    title = &quot;Twitter Usage&quot;,
+    subtitle = &quot;Around 18% use Twitter&quot;,
+    x = &quot;&quot;,
+    y = &quot;Proportion&quot;) +
+  NULL
+
+gss_plot_twitter</code></pre>
+<p><img src="/blogs/socialmedia_files/figure-html/proportions-3.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
 <div id="instagram-and-snapchat-by-sex" class="section level2">
 <h2>Instagram and Snapchat, by sex</h2>
 <p>Can we estimate the <em>population</em> proportion of Snapchat or Instagram users in 2016?</p>
@@ -31,12 +115,12 @@ output:
     TRUE ~ NA_character_)) 
   
 # calculate the proportion
-gss_prop &lt;- gss_snap_insta %&gt;%
+gss_prop_si &lt;- gss_snap_insta %&gt;%
   filter(!is.na(snap_insta)) %&gt;% 
   group_by(snap_insta) %&gt;% 
   summarise(count = n()) %&gt;% 
   mutate(prop = count/sum(count)) 
-gss_prop</code></pre>
+gss_prop_si</code></pre>
 <pre><code>## # A tibble: 2 x 3
 ##   snap_insta count  prop
 ##   &lt;chr&gt;      &lt;int&gt; &lt;dbl&gt;
@@ -78,7 +162,7 @@ histogram_si &lt;- ggplot(snap_insta_formula_ci,
    theme(legend.position = &#39;none&#39;) + 
    NULL
 histogram_si</code></pre>
-<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-1-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p><img src="/blogs/socialmedia_files/figure-html/snapinsta-1.png" width="648" style="display: block; margin: auto;" /></p>
 </div>
 <div id="twitter-by-education-level" class="section level2">
 <h2>Twitter, by education level</h2>
@@ -151,7 +235,7 @@ barchart_t &lt;- ggplot(twitter_formula_ci,
    NULL
 
 barchart_t</code></pre>
-<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-2-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-1-1.png" width="648" style="display: block; margin: auto;" /></p>
 </div>
 <div id="email-usage" class="section level2">
 <h2>Email usage</h2>
@@ -181,7 +265,7 @@ plot_email &lt;- ggplot(gss_email,
   NULL
 
 plot_email</code></pre>
-<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-3-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-2-1.png" width="648" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># calculate a 95% bootstrap confidence interval for the mean
 boot_email &lt;- gss_email %&gt;% 
   specify(response = email) %&gt;% 
@@ -214,6 +298,6 @@ percentile_ci</code></pre>
 ##      &lt;dbl&gt;    &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;
 ## 1     384.     449.         6.24         7.29</code></pre>
 <pre class="r"><code>visualise(boot_email)</code></pre>
-<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-3-2.png" width="648" style="display: block; margin: auto;" /></p>
+<p><img src="/blogs/socialmedia_files/figure-html/unnamed-chunk-2-2.png" width="648" style="display: block; margin: auto;" /></p>
 </div>
 </div>

@@ -1,7 +1,7 @@
 ---
-title: 'Pay discriminaton'
+title: "GDP Components"
 author: "Josephine Haag"
-date: "2020-09-18"
+date: "2020-09-20"
 output:
   html_document:
     code_folding: show
@@ -16,182 +16,217 @@ output:
 
 
 
-<div id="omega-group---pay-discrimination" class="section level1">
-<h1>Omega Group - Pay Discrimination</h1>
-<p>At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries was warranted.</p>
-<p>You are asked to carry out the analysis. The objective is to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor.</p>
-<div id="what-is-the-relationship-between-salary-and-gender" class="section level2">
-<h2>What is the relationship between salary and gender?</h2>
-<pre class="r"><code># Summary Statistics of salary by gender
-mosaic::favstats (salary ~ gender, data=omega)</code></pre>
-<pre><code>##   gender   min    Q1 median    Q3   max  mean   sd  n missing
-## 1 female 47033 60338  64618 70033 78800 64543 7567 26       0
-## 2   male 54768 68331  74675 78568 84576 73239 7463 24       0</code></pre>
-<pre class="r"><code># Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
-# the t-critical value, the standard error, the margin of error, 
-# and the low/high endpoints of a 95% condifence interval
-salary_sum_stats &lt;- omega %&gt;%
-  group_by(gender) %&gt;%
-  summarise(mean_salary = mean(salary),
-            sd_salary = sd(salary),
-            count = n(),
-            se_salary = sd_salary / sqrt(count),
-            t_critical = qt(0.975, count - 1),
-            margin_of_error = t_critical * se_salary,
-            salary_low = mean_salary - margin_of_error,
-            salary_high = mean_salary + margin_of_error)
-salary_sum_stats</code></pre>
-<pre><code>## # A tibble: 2 x 9
-##   gender mean_salary sd_salary count se_salary t_critical margin_of_error
-##   &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;     &lt;dbl&gt;      &lt;dbl&gt;           &lt;dbl&gt;
-## 1 female      64543.     7567.    26     1484.       2.06           3056.
-## 2 male        73239.     7463.    24     1523.       2.07           3151.
-## # … with 2 more variables: salary_low &lt;dbl&gt;, salary_high &lt;dbl&gt;</code></pre>
-<blockquote>
-<p>What can you conclude from your analysis? A couple of sentences would be enough
-Answer:
-In this sample size, male’s average salary is higher than the female’s. Male’s 95% confidence interval is also higher than the female’s with no overlaps. If we take another sample, we are quite confident that the male’s average salary would be higher than the female’s in that sample too.</p>
-</blockquote>
-<pre class="r"><code># hypothesis testing using t.test() 
-t.test(salary ~ gender, data = omega)</code></pre>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  salary by gender
-## t = -4, df = 48, p-value = 2e-04
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -12973  -4420
-## sample estimates:
-## mean in group female   mean in group male 
-##                64543                73239</code></pre>
-<pre class="r"><code># hypothesis testing using infer package
-salary_diff &lt;- omega %&gt;%
-  specify(salary ~ gender) %&gt;%
-  calculate(stat = &quot;diff in means&quot;, order = c(&quot;male&quot;, &quot;female&quot;))
-salary_gender_null &lt;- omega %&gt;%
-  specify(salary ~ gender) %&gt;%
-  hypothesize(null = &quot;independence&quot;) %&gt;%
-  generate(reps = 1000, type = &quot;permute&quot;) %&gt;%
-  calculate(stat = &quot;diff in means&quot;, order = c(&quot;male&quot;, &quot;female&quot;))
-salary_gender_null %&gt;% visualize() +
-  shade_p_value(obs_stat = salary_diff, direction = &quot;two-sided&quot;)</code></pre>
-<p><img src="/blogs/omega_files/figure-html/hypothesis_testing-1.png" width="648" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>salary_gender_null %&gt;%
-  get_p_value(obs_stat = salary_diff, direction = &quot;two_sided&quot;)</code></pre>
-<pre><code>## # A tibble: 1 x 1
-##   p_value
-##     &lt;dbl&gt;
-## 1       0</code></pre>
-<blockquote>
-<p>What can you conclude from your analysis? A couple of sentences would be enough
-Answer:
-We can refuse the null hypothesis. The mean salaries of male and female are significantly different.</p>
-</blockquote>
-</div>
-<div id="relationship-experience---gender" class="section level2">
-<h2>Relationship Experience - Gender?</h2>
-<pre class="r"><code># Summary Statistics of salary by gender
-favstats (experience ~ gender, data=omega)</code></pre>
-<pre><code>##   gender min    Q1 median   Q3 max  mean    sd  n missing
-## 1 female   0  0.25    3.0 14.0  29  7.38  8.51 26       0
-## 2   male   1 15.75   19.5 31.2  44 21.12 10.92 24       0</code></pre>
-<p>Based on this evidence, can you conclude that there is a significant difference between the experience of the male and female executives? Perform similar analyses as in the previous section. Does your conclusion validate or endanger your conclusion about the difference in male and female salaries?</p>
-<pre class="r"><code># hypothesis testing using t.test() 
-t.test(experience ~ gender, data = omega)</code></pre>
-<pre><code>## 
-##  Welch Two Sample t-test
-## 
-## data:  experience by gender
-## t = -5, df = 43, p-value = 1e-05
-## alternative hypothesis: true difference in means is not equal to 0
-## 95 percent confidence interval:
-##  -19.35  -8.13
-## sample estimates:
-## mean in group female   mean in group male 
-##                 7.38                21.12</code></pre>
-<pre class="r"><code># hypothesis testing using infer package
-experience_diff &lt;- omega %&gt;%
-  specify(experience ~ gender) %&gt;%
-  calculate(stat = &quot;diff in means&quot;, order = c(&quot;male&quot;, &quot;female&quot;))
-experience_gender_null &lt;- omega %&gt;%
-  specify(experience ~ gender) %&gt;%
-  hypothesize(null = &quot;independence&quot;) %&gt;%
-  generate(reps = 1000, type = &quot;permute&quot;) %&gt;%
-  calculate(stat = &quot;diff in means&quot;, order = c(&quot;male&quot;, &quot;female&quot;))
-experience_gender_null %&gt;% visualize() +
-  shade_p_value(obs_stat = experience_diff, direction = &quot;two-sided&quot;)</code></pre>
-<p><img src="/blogs/omega_files/figure-html/hypothesis_testing%20executives-1.png" width="648" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>experience_gender_null %&gt;%
-  get_p_value(obs_stat = experience_diff, direction = &quot;two_sided&quot;)</code></pre>
-<pre><code>## # A tibble: 1 x 1
-##   p_value
-##     &lt;dbl&gt;
-## 1       0</code></pre>
-<p>Answer:
-There is a significant difference between the average experience of the male and female executives. But it does not prove the correlation between salary and experience, so it can neither validate nor endanger the previous conclusion.</p>
-</div>
-<div id="relationship-salary---experience" class="section level2">
-<h2>Relationship Salary - Experience ?</h2>
-<pre class="r"><code>ggplot(omega, aes(experience, salary)) +
-  geom_point() +
-  geom_smooth() +
-  labs(
-    title = &quot;The Relationship between Salary and Experience&quot;,
-    x = &quot;Experience&quot;,
-    y = &quot;Salary&quot;
-  )</code></pre>
-<p><img src="/blogs/omega_files/figure-html/salary_exp_scatter-1.png" width="648" style="display: block; margin: auto;" /></p>
-</div>
-<div id="check-correlations-between-the-data" class="section level2">
-<h2>Check correlations between the data</h2>
-<pre class="r"><code>omega %&gt;% 
-  select(gender, experience, salary) %&gt;% #order variables they will appear in ggpairs()
-  ggpairs(aes(colour=gender, alpha = 0.3))+
-  theme_bw()</code></pre>
-<p><img src="/blogs/omega_files/figure-html/ggpairs-1.png" width="648" style="display: block; margin: auto;" /></p>
-<blockquote>
-<p>Look at the salary vs experience scatterplot. What can you infer from this plot? Explain in a couple of sentences
-Answer:
-Salary and experience do have strong correlation and the correlation is higher within female. (CAN’T THINK OF MORE, NEED TO COME BACK)</p>
-</blockquote>
-<blockquote>
-<p>What can you conclude from your analysis? A couple of sentences would be enough</p>
-</blockquote>
-<p>You can also run a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money. You should tun your hypothesis testing using <code>t.test()</code> and with the simulation method from the <code>infer</code> package.</p>
-<pre class="r"><code># hypothesis testing using t.test() 
+<div id="challenge-gdp-components-over-time-and-among-countries" class="section level1">
+<h1>Challenge: GDP components over time and among countries</h1>
+<p>After cleaning the dataset, I will try to reproduce a given graph with a different theme and then analyze the different GDP components across countries</p>
+<pre class="r"><code># tidy data and convert to long format
+tidy_GDP_data &lt;- UN_GDP_data %&gt;%
+  pivot_longer(cols = c(&#39;1970&#39;:&#39;2017&#39;), 
+               names_to = &quot;Year&quot;, 
+               values_to = &quot;Amount&quot;) %&gt;%
+  rename(Components = IndicatorName) %&gt;%
+  # Components [Components == &quot;Exports of goods and services&quot;] &lt;- &quot;Exports&quot;
+  # rename indicators
+  mutate(Components = case_when( 
+  Components == &quot;Final consumption expenditure&quot; ~ &quot;Final consumption&quot;,
+  Components == &quot;Household consumption expenditure (including Non-profit institutions serving households)&quot; ~ &quot;Household expenditure&quot;,
+  Components == &quot;General government final consumption expenditure&quot; ~ &quot;Government expenditure&quot;,
+  Components == &quot;Gross capital formation&quot; ~ &quot;Gross capital formation&quot;,
+  Components == &quot;Gross fixed capital formation (including Acquisitions less disposals of valuables)&quot; ~ &quot;Gross fixed capital&quot;,
+  Components == &quot;Changes in inventories&quot; ~ &quot;Inventory change&quot;,
+  Components == &quot;Exports of goods and services&quot; ~ &quot;Exports&quot;,
+  Components == &quot;Imports of goods and services&quot; ~ &quot;Imports&quot;,
+  Components == &quot;Gross Domestic Product (GDP)&quot; ~ &quot;GDP&quot;,
+  Components == &quot;Agriculture, hunting, forestry, fishing (ISIC A-B)&quot; ~ &quot;ISIC A-B&quot;,
+  Components == &quot;Mining, Manufacturing, Utilities (ISIC C-E)&quot; ~ &quot;ISIC C-E&quot;,
+  Components == &quot;Manufacturing (ISIC D)&quot; ~ &quot;ISIC D&quot;,
+  Components == &quot;Construction (ISIC F)&quot; ~ &quot;ISIC F&quot;,
+  Components == &quot;Wholesale, retail trade, restaurants and hotels (ISIC G-H)&quot; ~ &quot;ISIC G-H&quot;,
+  Components == &quot;Transport, storage and communication (ISIC I)&quot; ~ &quot;ISIC I&quot;,
+  Components == &quot;Other Activities (ISIC J-P)&quot; ~ &quot;ISIC J-P&quot;,
+  Components == &quot;Total Value Added&quot; ~ &quot;TVA&quot;)) %&gt;%
+  mutate(Amount = (Amount / 1e9)) # divide to express data in billions
+glimpse(tidy_GDP_data)</code></pre>
+<pre><code>## Rows: 176,880
+## Columns: 5
+## $ CountryID  &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4…
+## $ Country    &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanistan&quot;…
+## $ Components &lt;chr&gt; &quot;Final consumption&quot;, &quot;Final consumption&quot;, &quot;Final consumpti…
+## $ Year       &lt;chr&gt; &quot;1970&quot;, &quot;1971&quot;, &quot;1972&quot;, &quot;1973&quot;, &quot;1974&quot;, &quot;1975&quot;, &quot;1976&quot;, &quot;1…
+## $ Amount     &lt;dbl&gt; 5.56, 5.33, 5.20, 5.75, 6.15, 6.32, 6.37, 6.90, 7.09, 6.92…</code></pre>
+<p>First, can you produce this plot?</p>
+<p><img src="gdp1.png" width="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># define 3 countries
+country_list &lt;- c(&quot;United States&quot;,&quot;India&quot;, &quot;Germany&quot;)
 
+# define 5 components
+indicator_list &lt;- c(&quot;Gross capital formation&quot;, &quot;Exports&quot;, &quot;Government expenditure&quot;, &quot;Household expenditure&quot;, &quot;Imports&quot;)
+tidy_GDP_data_filter &lt;- tidy_GDP_data %&gt;%
+    filter(Country %in% country_list, Components %in% indicator_list) 
 
-# hypothesis testing using infer package</code></pre>
-<blockquote>
-<p>What can you conclude from your analysis? A couple of sentences would be enough</p>
-</blockquote>
-</div>
-<div id="relationship-experience---gender-1" class="section level2">
-<h2>Relationship Experience - Gender?</h2>
-<p>At the board meeting, someone raised the issue that there was indeed a substantial difference between male and female salaries, but that this was attributable to other reasons such as differences in experience. A questionnaire send out to the 50 executives in the sample reveals that the average experience of the men is approximately 21 years, whereas the women only have about 7 years experience on average (see table below).</p>
-<pre class="r"><code># Summary Statistics of salary by gender
-favstats (experience ~ gender, data=omega)</code></pre>
-<pre><code>##   gender min    Q1 median   Q3 max  mean    sd  n missing
-## 1 female   0  0.25    3.0 14.0  29  7.38  8.51 26       0
-## 2   male   1 15.75   19.5 31.2  44 21.12 10.92 24       0</code></pre>
-<p>Based on this evidence, can you conclude that there is a significant difference between the experience of the male and female executives? Perform similar analyses as in the previous section. Does your conclusion validate or endanger your conclusion about the difference in male and female salaries?</p>
-</div>
-<div id="relationship-salary---experience-1" class="section level2">
-<h2>Relationship Salary - Experience ?</h2>
-<p>Someone at the meeting argues that clearly, a more thorough analysis of the relationship between salary and experience is required before any conclusion can be drawn about whether there is any gender-based salary discrimination in the company.</p>
-<p>Analyse the relationship between salary and experience. Draw a scatterplot to visually inspect the data</p>
-</div>
-<div id="check-correlations-between-the-data-1" class="section level2">
-<h2>Check correlations between the data</h2>
-<p>You can use <code>GGally:ggpairs()</code> to create a scatterplot and correlation matrix. Essentially, we change the order our variables will appear in and have the dependent variable (Y), salary, as last in our list. We then pipe the dataframe to <code>ggpairs()</code> with <code>aes</code> arguments to colour by <code>gender</code> and make ths plots somewhat transparent (<code>alpha  = 0.3</code>).</p>
-<pre class="r"><code>omega %&gt;% 
-  select(gender, experience, salary) %&gt;% #order variables they will appear in ggpairs()
-  ggpairs(aes(colour=gender, alpha = 0.3))+
-  theme_bw()</code></pre>
-<p><img src="/blogs/omega_files/figure-html/ggpairs%20plot-1.png" width="648" style="display: block; margin: auto;" /></p>
-<blockquote>
-<p>Look at the salary vs experience scatterplot. What can you infer from this plot? Explain in a couple of sentences</p>
-</blockquote>
+# factor components
+tidy_GDP_data_filter$Components &lt;- factor(tidy_GDP_data_filter$Components, levels = indicator_list)
+countries_3 &lt;- tidy_GDP_data_filter  %&gt;%
+  
+  # filter(Country %in% country_list, Components %in% indicator_list) %&gt;%
+  ggplot(aes(x = Year, y = Amount, color = Components)) +
+  geom_line(aes(group = Components)) +
+  facet_wrap(~Country) +
+  labs(title = &quot;GDP components over time&quot;,
+       subtitle = &quot;In constant 2010 USD&quot;,
+       y = &quot;Billion US$&quot;, 
+       x = &quot;&quot;) +
+  guides(colour = guide_legend(&quot;Components of GDP&quot;)) +
+  scale_x_discrete(breaks = seq(1970, 2017, by = 10)) + # scale by 10 years
+  expand_limits(y = 0) +
+  NULL
+  
+countries_3        </code></pre>
+<p><img src="/blogs/omega_files/figure-html/create%20graph-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>wide_GDP_data &lt;- tidy_GDP_data %&gt;%
+  pivot_wider(names_from = &quot;Components&quot;, values_from = &quot;Amount&quot;) %&gt;%
+  select(Country, Year, &quot;Household expenditure&quot;:&quot;GDP&quot;)
+wide_GDP_data</code></pre>
+<pre><code>## # A tibble: 10,560 x 9
+##    Country Year  `Household expe… `Government exp… `Gross capital …
+##    &lt;chr&gt;   &lt;chr&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Afghan… 1970              5.07            0.372            0.985
+##  2 Afghan… 1971              4.84            0.382            1.05 
+##  3 Afghan… 1972              4.70            0.402            0.919
+##  4 Afghan… 1973              5.21            0.421            0.919
+##  5 Afghan… 1974              5.59            0.431            1.18 
+##  6 Afghan… 1975              5.65            0.598            1.37 
+##  7 Afghan… 1976              5.68            0.627            2.03 
+##  8 Afghan… 1977              6.15            0.676            1.92 
+##  9 Afghan… 1978              6.30            0.725            2.22 
+## 10 Afghan… 1979              6.15            0.708            2.07 
+## # … with 10,550 more rows, and 4 more variables: `Gross fixed capital` &lt;dbl&gt;,
+## #   Exports &lt;dbl&gt;, Imports &lt;dbl&gt;, GDP &lt;dbl&gt;</code></pre>
+<pre class="r"><code>wide_GDP_calc &lt;- wide_GDP_data %&gt;%
+   mutate(`Net Exports` = Exports - Imports) %&gt;% 
+   # GDP = C + I + G + Nx
+   mutate(GDP_calc = (`Household expenditure` + `Gross capital formation` + `Government expenditure` + `Net Exports`))
+ 
+wide_GDP_calc</code></pre>
+<pre><code>## # A tibble: 10,560 x 11
+##    Country Year  `Household expe… `Government exp… `Gross capital …
+##    &lt;chr&gt;   &lt;chr&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Afghan… 1970              5.07            0.372            0.985
+##  2 Afghan… 1971              4.84            0.382            1.05 
+##  3 Afghan… 1972              4.70            0.402            0.919
+##  4 Afghan… 1973              5.21            0.421            0.919
+##  5 Afghan… 1974              5.59            0.431            1.18 
+##  6 Afghan… 1975              5.65            0.598            1.37 
+##  7 Afghan… 1976              5.68            0.627            2.03 
+##  8 Afghan… 1977              6.15            0.676            1.92 
+##  9 Afghan… 1978              6.30            0.725            2.22 
+## 10 Afghan… 1979              6.15            0.708            2.07 
+## # … with 10,550 more rows, and 6 more variables: `Gross fixed capital` &lt;dbl&gt;,
+## #   Exports &lt;dbl&gt;, Imports &lt;dbl&gt;, GDP &lt;dbl&gt;, `Net Exports` &lt;dbl&gt;,
+## #   GDP_calc &lt;dbl&gt;</code></pre>
+<p>We can see that for every observation there can be small deviations between the calculated and the given GDP ranging up to 6%.</p>
+<pre class="r"><code># calculate % difference between GDP given and GDP calculated
+wide_GDP_calc_diff &lt;- wide_GDP_calc %&gt;%
+  mutate(GDP_diff = abs((GDP - GDP_calc)/GDP))
+         
+wide_GDP_calc_diff </code></pre>
+<pre><code>## # A tibble: 10,560 x 12
+##    Country Year  `Household expe… `Government exp… `Gross capital …
+##    &lt;chr&gt;   &lt;chr&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Afghan… 1970              5.07            0.372            0.985
+##  2 Afghan… 1971              4.84            0.382            1.05 
+##  3 Afghan… 1972              4.70            0.402            0.919
+##  4 Afghan… 1973              5.21            0.421            0.919
+##  5 Afghan… 1974              5.59            0.431            1.18 
+##  6 Afghan… 1975              5.65            0.598            1.37 
+##  7 Afghan… 1976              5.68            0.627            2.03 
+##  8 Afghan… 1977              6.15            0.676            1.92 
+##  9 Afghan… 1978              6.30            0.725            2.22 
+## 10 Afghan… 1979              6.15            0.708            2.07 
+## # … with 10,550 more rows, and 7 more variables: `Gross fixed capital` &lt;dbl&gt;,
+## #   Exports &lt;dbl&gt;, Imports &lt;dbl&gt;, GDP &lt;dbl&gt;, `Net Exports` &lt;dbl&gt;,
+## #   GDP_calc &lt;dbl&gt;, GDP_diff &lt;dbl&gt;</code></pre>
+<pre class="r"><code>difference_plot &lt;- wide_GDP_calc_diff %&gt;%
+  ggplot(aes(x=GDP_diff)) +
+  geom_histogram()
+
+# show the distribution of differences
+difference_plot</code></pre>
+<p><img src="/blogs/omega_files/figure-html/difference%20GDP-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>sum(wide_GDP_calc_diff$GDP_diff, na.rm = TRUE)</code></pre>
+<pre><code>## [1] 455</code></pre>
+<p><img src="gdp2.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Looking at this chart, I will try to analyze the different dynamics among these three countries?
+First of all, the graph shows the proportion of GDP components in Germany, India, and the US.</p>
+<p>In Germany, these proportions have stayed relatively constant over the years. As in the other two countries, Household Expenditure represents the largest proportion of GDP at around 60%. Net Exports have remained around 0%, meaning that Exports were almost equal to Imports. However, since the 2000s Exports have increased, leading to a trade surplus. This could possibly be related to the introduction of the Euro in 1999.</p>
+<p>India demonstrates quite some changes in proportion. The share of household expenditure has decreased significantly over the years while the share of gross capital formation has increased. This makes sense because India has developed a lot in the past years and it has been heavily invested in India. Unlike Germany, Net export are mostly below 0, which means that exports are lower than imports and there is a trade deficit.</p>
+<p>The US also has a trade deficit, which has increased over the years. It is interesting to see that the share of Government expenditure has decreased in the US while the share of gross capital formation has overtaken the share of Government expenditure.</p>
+<div id="gdp-components" class="section level3">
+<h3>GDP Components</h3>
+<p>Since I am German, was born in the United States and grew up in Germany, I will compare these three countries in my next analysis, which investigates the different GDP components over time.</p>
+<pre class="r"><code># make a second country list
+country_list_2 &lt;- c(&quot;United States&quot;,&quot;Switzerland&quot;, &quot;Germany&quot;)
+
+# mutate into percentage
+wide_GDP_calc_prop &lt;- wide_GDP_calc %&gt;%
+  mutate(`Net exports` = `Net Exports` / GDP_calc,
+         `Household Expenditure` = `Household expenditure` / GDP_calc,
+         `Government Expenditure` = `Government expenditure` / GDP_calc,
+         `Gross Capital Formation` = `Gross capital formation` / GDP_calc ) %&gt;%
+  select(Country, Year, &quot;Net exports&quot;:&quot;Gross Capital Formation&quot;)
+wide_GDP_calc_prop</code></pre>
+<pre><code>## # A tibble: 10,560 x 6
+##    Country Year  `Net exports` `Household Expe… `Government Exp…
+##    &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Afghan… 1970       -0.0113             0.798           0.0587
+##  2 Afghan… 1971       -0.0201             0.787           0.0621
+##  3 Afghan… 1972       -0.0145             0.792           0.0677
+##  4 Afghan… 1973       -0.00923            0.803           0.0649
+##  5 Afghan… 1974       -0.0152             0.788           0.0608
+##  6 Afghan… 1975       -0.0191             0.756           0.0800
+##  7 Afghan… 1976       -0.0180             0.693           0.0765
+##  8 Afghan… 1977       -0.0292             0.724           0.0796
+##  9 Afghan… 1978       -0.0302             0.702           0.0808
+## 10 Afghan… 1979       -0.0292             0.709           0.0815
+## # … with 10,550 more rows, and 1 more variable: `Gross Capital Formation` &lt;dbl&gt;</code></pre>
+<pre class="r"><code>long_GDP_prop &lt;- wide_GDP_calc_prop %&gt;%
+    pivot_longer(cols = c(`Net exports`:`Gross Capital Formation`),
+                 names_to = &quot;Component&quot;, 
+                 values_to = &quot;Proportion&quot;)
+long_GDP_prop</code></pre>
+<pre><code>## # A tibble: 42,240 x 4
+##    Country     Year  Component               Proportion
+##    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;                        &lt;dbl&gt;
+##  1 Afghanistan 1970  Net exports                -0.0113
+##  2 Afghanistan 1970  Household Expenditure       0.798 
+##  3 Afghanistan 1970  Government Expenditure      0.0587
+##  4 Afghanistan 1970  Gross Capital Formation     0.155 
+##  5 Afghanistan 1971  Net exports                -0.0201
+##  6 Afghanistan 1971  Household Expenditure       0.787 
+##  7 Afghanistan 1971  Government Expenditure      0.0621
+##  8 Afghanistan 1971  Gross Capital Formation     0.171 
+##  9 Afghanistan 1972  Net exports                -0.0145
+## 10 Afghanistan 1972  Household Expenditure       0.792 
+## # … with 42,230 more rows</code></pre>
+<pre class="r"><code>tidy_GDP_data_prop_filter &lt;- tidy_GDP_data %&gt;%
+    filter(Country %in% country_list_2, Components %in% indicator_list) 
+
+# graph
+countries_prop &lt;- long_GDP_prop %&gt;%
+  filter(Country %in% country_list_2) %&gt;%
+  ggplot(aes(x = Year, y = Proportion, color = Component)) +
+  geom_line(aes(group = Component)) +
+  facet_wrap(~Country) +
+  labs(title = &quot;GDP and its breakdown at constant 2010 prices in US Doller&quot;,
+       y = &quot;proportion&quot;, 
+       x = &quot;&quot;) +
+  guides(colour = guide_legend(&quot;Components of GDP&quot;)) +
+  scale_x_discrete(breaks = seq(1970, 2017, by = 10)) + # scale correctly
+  scale_y_continuous(labels = scales::percent) + # label y axis with proportions
+  expand_limits(y = 0) +
+  NULL
+
+countries_prop </code></pre>
+<p><img src="/blogs/omega_files/figure-html/unnamed-chunk-1-1.png" width="648" style="display: block; margin: auto;" /></p>
 </div>
 </div>

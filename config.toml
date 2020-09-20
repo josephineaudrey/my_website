@@ -110,9 +110,9 @@ disqusShortname = ""
       url = "blogs/employees"
 
     [[params.tiles.showcase]]
-     title = "Gender pay gap"
-     subtitle = "Is pay discrimination real?"
-     image = "pay.jpg"
+     title = "GDP across times and countries "
+     subtitle = "What contributes to GDP?"
+     image = "gdp.jpg"
      url = "blogs/omega"
 
    # [[params.tiles.showcase]]

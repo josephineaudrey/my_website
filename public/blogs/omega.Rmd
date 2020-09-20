@@ -1,5 +1,5 @@
 ---
-title: 'Pay discriminaton'
+title: "GDP Components"
 author: "Josephine Haag"
 date: "`r Sys.Date()`"
 output:
@@ -14,7 +14,7 @@ output:
     toc: yes
 ---
 
-```{r, setup, echo=FALSE}
+```{r, setup, echo=FALSE, include=FALSE}
 knitr::opts_chunk$set(
   message = FALSE, 
   warning = FALSE, 
@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r load-libraries, echo=FALSE}
+```{r load-libraries, echo=FALSE, include=FALSE}
 library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
 library(mosaic)
 library(ggthemes)
@@ -43,177 +43,170 @@ library(broom)
 library(tidyquant)
 library(infer)
 library(openintro)
+library(plotly)
+library(ggthemr)
+ggthemr('dust')
 ```
 
-# Omega Group - Pay Discrimination
+# Challenge: GDP components over time and among countries
 
-At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries was warranted. 
-
-You are asked to carry out the analysis. The objective is to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor. 
-
-```{r load_omega_data, include=FALSE}
-omega <- read_csv(here::here("content", "blogs", "omega.csv"))
-glimpse(omega) # examine the data frame
-
+After cleaning the dataset, I will try to reproduce a given graph with a different theme and then analyze the different GDP components across countries 
+```{r read_GDP_data, include=FALSE}
+UN_GDP_data  <-  read_excel(("Download-GDPconstant-USD-countries.xls"), # Excel filename
+                sheet="Download-GDPconstant-USD-countr", # Sheet name
+                skip=2) # Number of rows to skip
 ```
 
-## What is the relationship between salary and gender?
-
-```{r, confint_single_valiables}
-# Summary Statistics of salary by gender
-mosaic::favstats (salary ~ gender, data=omega)
-# Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
-# the t-critical value, the standard error, the margin of error, 
-# and the low/high endpoints of a 95% condifence interval
-salary_sum_stats <- omega %>%
-  group_by(gender) %>%
-  summarise(mean_salary = mean(salary),
-            sd_salary = sd(salary),
-            count = n(),
-            se_salary = sd_salary / sqrt(count),
-            t_critical = qt(0.975, count - 1),
-            margin_of_error = t_critical * se_salary,
-            salary_low = mean_salary - margin_of_error,
-            salary_high = mean_salary + margin_of_error)
-salary_sum_stats
+```{r reshape_GDP_data}
+# tidy data and convert to long format
+tidy_GDP_data <- UN_GDP_data %>%
+  pivot_longer(cols = c('1970':'2017'), 
+               names_to = "Year", 
+               values_to = "Amount") %>%
+  rename(Components = IndicatorName) %>%
+  # Components [Components == "Exports of goods and services"] <- "Exports"
+  # rename indicators
+  mutate(Components = case_when( 
+  Components == "Final consumption expenditure" ~ "Final consumption",
+  Components == "Household consumption expenditure (including Non-profit institutions serving households)" ~ "Household expenditure",
+  Components == "General government final consumption expenditure" ~ "Government expenditure",
+  Components == "Gross capital formation" ~ "Gross capital formation",
+  Components == "Gross fixed capital formation (including Acquisitions less disposals of valuables)" ~ "Gross fixed capital",
+  Components == "Changes in inventories" ~ "Inventory change",
+  Components == "Exports of goods and services" ~ "Exports",
+  Components == "Imports of goods and services" ~ "Imports",
+  Components == "Gross Domestic Product (GDP)" ~ "GDP",
+  Components == "Agriculture, hunting, forestry, fishing (ISIC A-B)" ~ "ISIC A-B",
+  Components == "Mining, Manufacturing, Utilities (ISIC C-E)" ~ "ISIC C-E",
+  Components == "Manufacturing (ISIC D)" ~ "ISIC D",
+  Components == "Construction (ISIC F)" ~ "ISIC F",
+  Components == "Wholesale, retail trade, restaurants and hotels (ISIC G-H)" ~ "ISIC G-H",
+  Components == "Transport, storage and communication (ISIC I)" ~ "ISIC I",
+  Components == "Other Activities (ISIC J-P)" ~ "ISIC J-P",
+  Components == "Total Value Added" ~ "TVA")) %>%
+  mutate(Amount = (Amount / 1e9)) # divide to express data in billions
+glimpse(tidy_GDP_data)
 ```
 
-> What can you conclude from your analysis? A couple of sentences would be enough
-Answer:
-In this sample size, male's average salary is higher than the female's. Male's 95% confidence interval is also higher than the female's with no overlaps. If we take another sample, we are quite confident that the male's average salary would be higher than the female's in that sample too.
+First, can you produce this plot?
 
-```{r, hypothesis_testing}
-# hypothesis testing using t.test() 
-t.test(salary ~ gender, data = omega)
-# hypothesis testing using infer package
-salary_diff <- omega %>%
-  specify(salary ~ gender) %>%
-  calculate(stat = "diff in means", order = c("male", "female"))
-salary_gender_null <- omega %>%
-  specify(salary ~ gender) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
-  calculate(stat = "diff in means", order = c("male", "female"))
-salary_gender_null %>% visualize() +
-  shade_p_value(obs_stat = salary_diff, direction = "two-sided")
-salary_gender_null %>%
-  get_p_value(obs_stat = salary_diff, direction = "two_sided")
+
+```{r gdp1, echo=FALSE, out.width="100%"}
+knitr::include_graphics(("gdp1.png"), error = FALSE)
 ```
 
-> What can you conclude from your analysis? A couple of sentences would be enough
-Answer: 
-We can refuse the null hypothesis. The mean salaries of male and female are significantly different.
+```{r create graph}
+# define 3 countries
+country_list <- c("United States","India", "Germany")
 
-## Relationship Experience - Gender?
+# define 5 components
+indicator_list <- c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports")
+tidy_GDP_data_filter <- tidy_GDP_data %>%
+    filter(Country %in% country_list, Components %in% indicator_list) 
 
-
-```{r, experience_stats}
-# Summary Statistics of salary by gender
-favstats (experience ~ gender, data=omega)
+# factor components
+tidy_GDP_data_filter$Components <- factor(tidy_GDP_data_filter$Components, levels = indicator_list)
+countries_3 <- tidy_GDP_data_filter  %>%
+  
+  # filter(Country %in% country_list, Components %in% indicator_list) %>%
+  ggplot(aes(x = Year, y = Amount, color = Components)) +
+  geom_line(aes(group = Components)) +
+  facet_wrap(~Country) +
+  labs(title = "GDP components over time",
+       subtitle = "In constant 2010 USD",
+       y = "Billion US$", 
+       x = "") +
+  guides(colour = guide_legend("Components of GDP")) +
+  scale_x_discrete(breaks = seq(1970, 2017, by = 10)) + # scale by 10 years
+  expand_limits(y = 0) +
+  NULL
+  
+countries_3        
 ```
 
-Based on this evidence, can you conclude that there is a significant difference between the experience of the male and female executives? Perform similar analyses as in the previous section. Does your conclusion validate or endanger your conclusion about the difference in male and female salaries?  
-
-```{r, hypothesis_testing executives}
-# hypothesis testing using t.test() 
-t.test(experience ~ gender, data = omega)
-# hypothesis testing using infer package
-experience_diff <- omega %>%
-  specify(experience ~ gender) %>%
-  calculate(stat = "diff in means", order = c("male", "female"))
-experience_gender_null <- omega %>%
-  specify(experience ~ gender) %>%
-  hypothesize(null = "independence") %>%
-  generate(reps = 1000, type = "permute") %>%
-  calculate(stat = "diff in means", order = c("male", "female"))
-experience_gender_null %>% visualize() +
-  shade_p_value(obs_stat = experience_diff, direction = "two-sided")
-experience_gender_null %>%
-  get_p_value(obs_stat = experience_diff, direction = "two_sided")
+```{r calc GDP}
+wide_GDP_data <- tidy_GDP_data %>%
+  pivot_wider(names_from = "Components", values_from = "Amount") %>%
+  select(Country, Year, "Household expenditure":"GDP")
+wide_GDP_data
+wide_GDP_calc <- wide_GDP_data %>%
+   mutate(`Net Exports` = Exports - Imports) %>% 
+   # GDP = C + I + G + Nx
+   mutate(GDP_calc = (`Household expenditure` + `Gross capital formation` + `Government expenditure` + `Net Exports`))
+ 
+wide_GDP_calc
 ```
 
-Answer:
-There is a significant difference between the average experience of the male and female executives. But it does not prove the correlation between salary and experience, so it can neither validate nor endanger the previous conclusion.
+We can see that for every observation there can be small deviations between the calculated and the given GDP ranging up to 6%.
 
-## Relationship Salary - Experience ?
+```{r difference GDP}
+# calculate % difference between GDP given and GDP calculated
+wide_GDP_calc_diff <- wide_GDP_calc %>%
+  mutate(GDP_diff = abs((GDP - GDP_calc)/GDP))
+         
+wide_GDP_calc_diff 
+difference_plot <- wide_GDP_calc_diff %>%
+  ggplot(aes(x=GDP_diff)) +
+  geom_histogram()
 
-```{r, salary_exp_scatter}
-ggplot(omega, aes(experience, salary)) +
-  geom_point() +
-  geom_smooth() +
-  labs(
-    title = "The Relationship between Salary and Experience",
-    x = "Experience",
-    y = "Salary"
-  )
-```
-
-## Check correlations between the data
-
-```{r, ggpairs}
-omega %>% 
-  select(gender, experience, salary) %>% #order variables they will appear in ggpairs()
-  ggpairs(aes(colour=gender, alpha = 0.3))+
-  theme_bw()
-```
-
-> Look at the salary vs experience scatterplot. What can you infer from this plot? Explain in a couple of sentences
-Answer:
-Salary and experience do have strong correlation and the correlation is higher within female. (CAN'T THINK OF MORE, NEED TO COME BACK)
-
-
-
-> What can you conclude from your analysis? A couple of sentences would be enough
-
-You can also run a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money. You should tun your hypothesis testing using `t.test()` and with the simulation method from the `infer` package.
-
-```{r, hypothesis_testing simulation}
-# hypothesis testing using t.test() 
-
-
-# hypothesis testing using infer package
-
-
-```
-
-> What can you conclude from your analysis? A couple of sentences would be enough
-
-
-## Relationship Experience - Gender?
-
-At the board meeting, someone raised the issue that there was indeed a substantial difference between male and female salaries, but that this was attributable to other reasons such as differences in experience. A questionnaire send out to the 50 executives in the sample reveals that the average experience of the men is approximately 21 years, whereas the women only have about 7 years experience on average (see table below).
-
-```{r, experience_stats gender}
-# Summary Statistics of salary by gender
-favstats (experience ~ gender, data=omega)
-
-```
-
-Based on this evidence, can you conclude that there is a significant difference between the experience of the male and female executives? Perform similar analyses as in the previous section. Does your conclusion validate or endanger your conclusion about the difference in male and female salaries?  
-
-
-
-## Relationship Salary - Experience ?
-
-Someone at the meeting argues that clearly, a more thorough analysis of the relationship between salary and experience is required before any conclusion can be drawn about whether there is any gender-based salary discrimination in the company.
-
-Analyse the relationship between salary and experience. Draw a scatterplot to visually inspect the data
-
-
-```{r, salary_exp_scatterplot}
-
-
+# show the distribution of differences
+difference_plot
+sum(wide_GDP_calc_diff$GDP_diff, na.rm = TRUE)
 ```
 
 
-## Check correlations between the data
-You can use `GGally:ggpairs()` to create a scatterplot and correlation matrix. Essentially, we change the order our variables will appear in and have the dependent variable (Y), salary, as last in our list. We then pipe the dataframe to `ggpairs()` with `aes` arguments to colour by `gender` and make ths plots somewhat transparent (`alpha  = 0.3`).
-
-```{r, ggpairs plot}
-omega %>% 
-  select(gender, experience, salary) %>% #order variables they will appear in ggpairs()
-  ggpairs(aes(colour=gender, alpha = 0.3))+
-  theme_bw()
+```{r gdp2, echo=FALSE, out.width="100%"}
+knitr::include_graphics(("gdp2.png"), error = FALSE)
 ```
 
-> Look at the salary vs experience scatterplot. What can you infer from this plot? Explain in a couple of sentences
+
+Looking at this chart, I will try to analyze the different dynamics among these three countries? 
+First of all, the graph shows the proportion of GDP components in Germany, India, and the US.
+
+In Germany, these proportions have stayed relatively constant over the years. As in the other two countries, Household Expenditure represents the largest proportion of GDP at around 60%. Net Exports have remained around 0%, meaning that Exports were almost equal to Imports. However, since the 2000s Exports have increased, leading to a trade surplus. This could possibly be related to the introduction of the Euro in 1999.
+
+India demonstrates quite some changes in proportion. The share of household expenditure has decreased significantly over the years while the share of gross capital formation has increased. This makes sense because India has developed a lot in the past years and it has been heavily invested in India. Unlike Germany, Net export are mostly below 0, which means that exports are lower than imports and there is a trade deficit.
+
+The US also has a trade deficit, which has increased over the years. It is interesting to see that the share of Government expenditure has decreased in the US while the share of gross capital formation has overtaken the share of Government expenditure. 
+
+
+### GDP Components
+
+Since I am German, was born in the United States and grew up in Germany, I will compare these three countries in my next analysis, which investigates the different GDP components over time.
+
+```{r}
+# make a second country list
+country_list_2 <- c("United States","Switzerland", "Germany")
+
+# mutate into percentage
+wide_GDP_calc_prop <- wide_GDP_calc %>%
+  mutate(`Net exports` = `Net Exports` / GDP_calc,
+         `Household Expenditure` = `Household expenditure` / GDP_calc,
+         `Government Expenditure` = `Government expenditure` / GDP_calc,
+         `Gross Capital Formation` = `Gross capital formation` / GDP_calc ) %>%
+  select(Country, Year, "Net exports":"Gross Capital Formation")
+wide_GDP_calc_prop
+long_GDP_prop <- wide_GDP_calc_prop %>%
+    pivot_longer(cols = c(`Net exports`:`Gross Capital Formation`),
+                 names_to = "Component", 
+                 values_to = "Proportion")
+long_GDP_prop
+tidy_GDP_data_prop_filter <- tidy_GDP_data %>%
+    filter(Country %in% country_list_2, Components %in% indicator_list) 
+
+# graph
+countries_prop <- long_GDP_prop %>%
+  filter(Country %in% country_list_2) %>%
+  ggplot(aes(x = Year, y = Proportion, color = Component)) +
+  geom_line(aes(group = Component)) +
+  facet_wrap(~Country) +
+  labs(title = "GDP and its breakdown at constant 2010 prices in US Doller",
+       y = "proportion", 
+       x = "") +
+  guides(colour = guide_legend("Components of GDP")) +
+  scale_x_discrete(breaks = seq(1970, 2017, by = 10)) + # scale correctly
+  scale_y_continuous(labels = scales::percent) + # label y axis with proportions
+  expand_limits(y = 0) +
+  NULL
+
+countries_prop 
