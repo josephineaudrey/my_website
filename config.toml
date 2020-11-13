@@ -115,17 +115,17 @@ disqusShortname = ""
      image = "gdp.jpg"
      url = "blogs/gdp"
 
-   # [[params.tiles.showcase]]
-     # title = "Resume"
-     # subtitle = "My experiences and education"
-     # image = "pic05.jpg"
-     # url = "blogs/ipsum"
+    [[params.tiles.showcase]]
+      title = "Resume"
+      subtitle = "My experiences and education"
+      image = "cv.jpg"
+      url = "blogs/CVJH"
 
-   # [[params.tiles.showcase]]
-     # title = "The social media trap"
-     # subtitle = "Who uses social media these days?"
-     # image = "socialmedia.jpg"
-     # url = "blogs/socialmedia"
+   [[params.tiles.showcase]]
+      title = "Crimes in London"
+      subtitle = "Ethnicity in Stops and Searches in Lond"
+      image = "crimes.jpg"
+      url = "blogs/crimes"
     # You can make more showcases by copy and pasting the code above
 
   # [params.blog]
