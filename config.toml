@@ -123,7 +123,7 @@ disqusShortname = ""
 
    [[params.tiles.showcase]]
       title = "Crimes in London"
-      subtitle = "Ethnicity in Stops and Searches in Lond"
+      subtitle = "Ethnicity in Stops and Searches in London"
       image = "crimes.jpg"
       url = "blogs/crimes"
     # You can make more showcases by copy and pasting the code above
